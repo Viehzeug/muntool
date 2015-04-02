@@ -1,0 +1,203 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>MUN Tool</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Brand</a>
+        </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="#" id="new-speakers-list">New Speakers List TODO</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Motion <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Moderated Caucus TODO</a></li>
+            <li><a href="#">Unmoderated Caucus TODO</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Timer TODO</a></li>
+            <li><a href="#">Poll TODO</a></li>
+            <li><a href="#">Row call TODO</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Show Rules TODO</a></li>
+      </ul>
+      </div> <!-- /.navbar-collapse -->
+ 
+
+
+      </div> <!-- ./container-floid > -->
+    </nav>
+
+    <div class="container-fluid">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Attendance List</h2>
+
+          <div class="input-group">
+            <input id="attendance-list-add-text" type="text" class="form-control" placeholder="Add to attendance list...">
+            <span class="input-group-btn">
+              <button id="attendance-list-add" class="btn btn-default" type="button" >Add</button>
+            </span>
+          </div><!-- /input-group -->
+
+          <ul id="attendance-list">
+          </ul>
+
+        </div>
+
+        <div class="col-md-4"> 
+
+          <p>
+            <div class="dropdown">
+              <button id="speakers-lists-dropdown" class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true"></button>
+              <ul id="speakers-lists-dropdown-menu" class="dropdown-menu" role="menu" aria-labelledby="speakers-lists-dropdown">
+              </ul>
+            </div>
+          </p>
+
+          <div>
+          <input id="speakers-list-add-text" type="text" class="form-control" placeholder="Add to speakers list...">
+          </div>
+
+          <ul id="speakers-list"></ul>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <h2>Speakers List</h2>
+
+        </div>
+
+      </div> <!-- /row -->
+
+      <!-- log -->
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Log</h2>
+        </div>
+      </div> <!-- /row -->
+
+    </div> <!-- /container -->
+
+    <!-- Modals -->
+    <div class="modal fade" id="NewSpeakersList" tabindex="-1" role="dialog" aria-labelledby="NewSpeakersListLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            <h4 class="modal-title" id="NewSpeakersListLabel">Add new Speakers List</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+            <div class="form-group">
+              <label for="new-speakers-list-name">Name:</label>
+              <input id="new-speakers-list-name" placeholder="Speakers List Name..." type="text" class="form-control">
+            </div>  
+            <div class="form-group">
+              <label for="new-speakers-list-duration">Speech duration [s]:</label>
+              <input id="new-speakers-list-duration" type="number" class="form-control">
+            </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="new-speakers-list-add" type="button" class="btn btn-primary">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="Motions" tabindex="-1" role="dialog" aria-labelledby="MotionsLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="MotionsLabel">Motions</h4>
+          </div>
+          <div class="modal-body">
+            <div class="pull-left" style="border-right: 1px solid #e5e5e5; padding-right: 10px; width: 50%;">
+              <h5>New Motion</h5>
+              <form>
+              <div class="form-group">
+                <label for="usr">Type</label>
+                <div class="radio">
+                  <label><input type="radio" name="new-motion-type">Moderated Caucus</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="new-motion-type">Unmoderated Caucus</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="new-motion-type">Other</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="usr">Name:</label>
+                <input type="text" class="form-control" id="usr">
+              </div>  
+              <div class="form-group">
+                <label for="usr">Duration:</label>
+                <input type="number" class="form-control" id="usr">
+              </div>
+              <button type="button" class="btn btn-primary">Add</button>
+              </form>
+            </div>
+
+            <div class="pull-right" style="padding-left: 10px; width: 50%;">
+              <h5>Vote on Motions</h5>
+            </div>
+
+            <div class="clearfix"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+      <script data-main="js/main" src="js/vendor/require.js"></script>
+    </body>
+</html>
