@@ -180,54 +180,46 @@
 
         </div> <!-- /Speakers List Block -->
 
-        <!-- Speech Block -->
-        <div class="col-md-3" ng-controller="speechController">
+        <!-- Right Block -->
+        <div class="col-md-3">
+          <div ng-controller="speechController"> <!-- Speech Block -->
+            <h2>Speech</h2>
+            <span style="font-size: 3em" id="speakers-list-control-timer">{{timeLeft}}</span>
+            <p style="font-size: 1.2em">Current Speaker: {{currentSpeaker.name}}</p>
+            <p style="font-size: 1.2em">Next Speaker: {{nextSpeaker.name}}</p>
+            <div id="speakers-list-control">
+              <div class="btn-group">
+                <button id="speakers-list-control-next-speaker" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="startNextDisabled" ng-click="startNext()">Start Next</button>
 
-          <h2>Speech</h2>
-          <span style="font-size: 3em" id="speakers-list-control-timer">{{timeLeft}}</span>
-          <p style="font-size: 1.2em">Current Speaker: {{currentSpeaker.name}}</p>
-          <p style="font-size: 1.2em">Next Speaker: {{nextSpeaker.name}}</p>
-          <div id="speakers-list-control">
-            <div class="btn-group">
-              <button id="speakers-list-control-next-speaker" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="startNextDisabled" ng-click="startNext()">Start Next</button>
+                <button id="speakers-list-control-reset-speech" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="resetDisabled" ng-click="resetSpeech()"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+                <!-- TODO
+                <button id="speakers-list-control-back" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="backDisabled"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 
-              <button id="speakers-list-control-reset-speech" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="resetDisabled" ng-click="resetSpeech()"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
-              <!-- TODO
-              <button id="speakers-list-control-back" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="backDisabled"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+                <button id="speakers-list-control-forward" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="forwardDisabled"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                -->
+              </div>
+            </div>
+          </div> <!-- /Speech Block -->
 
-              <button id="speakers-list-control-forward" class="btn btn-default " type="button" data-toggle="dropdown" aria-expanded="false" ng-disabled="forwardDisabled"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
-              -->
+          <div ng-controller="motionController">
+            <h2>Motions</h2>
+
+            <div> <!-- Possible Motions -->
+              <h3>Possible Motions</h3>
+              <ul>
+                <li ng-click="modCaucus()">Motion for Moderated Caucus</li>
+                <li ng-click="unmodCaucus()">Motion for Unmoderated Caucus</li>
+              </ul>
             </div>
           </div>
 
-        </div><!-- /Speech Block -->
+          <div ng-controller="clockController">
+            <p>{{ clock | date:'H:mm'}}</p>
+          </div>
+
+        </div><!-- /Right Block -->
     </div>
 
-    <!-- <div class="row">
-        <div class="col-md-8"></div>
-
-        <!-- Motion Block - - >
-        <div class="col-md-4" ng-controller="motionController">
-          
-          <h2>Motions</h2>
-
-          <div> <!-- Possible Motions - - >
-            <h3>Possible Motions</h3>
-            <ul>
-              <li ng-click="modCaucus()">Motion for Moderated Caucus</li>
-              <li ng-click="unmodCaucus()">Motion for Unmoderated Caucus</li>
-            </ul>
-          </div>
-          
-          <div> <!-- Unmod - - >
-          </div>
-
-          <div> <!-- Moderated - - >
-          </div>
-
-        </div><!-- /Motion Block - - >
-
-      </div> <!-- /row - - > -->
 
 
 <script type="text/ng-template" id="newCaucusModal.html">
