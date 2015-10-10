@@ -6,198 +6,189 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>MUN Tool</title>
+        <title>ETH MUN</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="bootstrap.min.css">
         <style>
             body {
                 padding-top: 50px;
-                padding-bottom: 20px;
             }
-        </style>
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/main.css">
 
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+            .footerLanding {
+              position: fixed;
+              bottom: 0;
+              z-index: 999;
+            }
+
+            .bg {
+              background: url('back.jpeg') no-repeat center center;
+              background-size: cover;
+              position: fixed;
+              width: 100%;
+              height: 350px; /*same height as jumbotron */
+              top: 50px;
+              left:0;
+              z-index: -1;
+            }
+
+            .jumbotron {
+              height: 350px;
+              color: white;
+              text-shadow: #444 0 1px 1px;
+              background:transparent;
+            }
+
+
+        </style>
+        <link rel="stylesheet" href="bootstrap-theme.min.css">
+        <link rel="stylesheet" href="main.css">
+
+        <script src="modernizr-2.8.3-respond-1.4.2.min.js"></script>
     </head>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="container-fluid" style="width: 90%">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Brand</a>
+          <a class="navbar-brand" href="#">
+            <img src="logo.png" style="margin-top: -15px; height: inherit; display:inline-block">
+            ETH MUN</a>
         </div>
 
-    <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav">
-        <li><a href="#" id="new-speakers-list">New Speakers List TODO</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Motion <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Moderated Caucus TODO</a></li>
-            <li><a href="#">Unmoderated Caucus TODO</a></li>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#aboutUs">About Us</a></li>
+            <li><a href="#sponsors">Sponsors</a></li>
+            <li><a href="#practiceSessions">Practice Sessions</a></li>
+            <li><a href="#zumun">ZuMUN</a></li>
           </ul>
-        </li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Timer TODO</a></li>
-            <li><a href="#">Poll TODO</a></li>
-            <li><a href="#">Row call TODO</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Show Rules TODO</a></li>
-      </ul>
-      </div> <!-- /.navbar-collapse -->
- 
+        </div>
 
-
-      </div> <!-- ./container-floid > -->
+      </div>
     </nav>
 
-    <div class="container-fluid">
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="bg"></div>
+    <div class="jumbotron">
+    <!-- 
+      <div class="container" style="width: 70%">
+        <h1>ETH MUN</h1>
+        <p class="lead">test</p>
+      </div>
+    --> 
+    </div>
+
+    <div class="container" style="width: 70%">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
-          <h2>Attendance List</h2>
-
-          <div class="input-group">
-            <input id="attendance-list-add-text" type="text" class="form-control" placeholder="Add to attendance list...">
-            <span class="input-group-btn">
-              <button id="attendance-list-add" class="btn btn-default" type="button" >Add</button>
-            </span>
-          </div><!-- /input-group -->
-
-          <ul id="attendance-list">
-          </ul>
-
+        <div class="col-md-8">
+          <h2>ETH MUN</h2>
+          <p>ETH Model United Nations was founded in 2007 by two enthusiastic students who wanted to see the principle of Model United Nations implemented at Europe’s leading technological university.</p>
+          <p>Ever since that moment Members of ETH MUN have organized weekly meetings to simulate the work and the intense debates of the UN and to prepare for international MUN conferences where they would debate with other committed students from all over the world and win awards for their outstanding diplomatic and negotiation skills.</p>
+          <p>Today, ETH MUN is one of the biggest commissions of the VSETH (Students' Union of the ETH) with an ever growing number of members and an active Alumni network.</p>
         </div>
 
-        <div class="col-md-4"> 
-
-          <p>
-            <div class="dropdown">
-              <button id="speakers-lists-dropdown" class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true"></button>
-              <ul id="speakers-lists-dropdown-menu" class="dropdown-menu" role="menu" aria-labelledby="speakers-lists-dropdown">
-              </ul>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+            <h2>What's up next?</h2>
+              <p><b>1. Practice Session</b> <br>
+                 <b>Topic:</b> Long-term effect of supplying arms for peacekeeping
+              </p>
+              <p>Thursday, 08.10.2015 <br>
+                 19:15, HG D 5.2</p>
             </div>
-          </p>
-
-          <div>
-          <input id="speakers-list-add-text" type="text" class="form-control" placeholder="Add to speakers list...">
           </div>
+          <div class="panel panel-default">
+            <div class="panel-body">
+            <h2>Newsletter</h2>
+              <p><a href="http://groupspaces.com/ETHModelUnitedNations/external/subscribe">Sign up</a> for our newsletter.</p>
+            </div>
+          </div>
+       </div>
+      </div>
 
-          <ul id="speakers-list"></ul>
-
+      <div class="row">
+        <div class="col-md-12" id="aboutUs">
+          <h2>About us</h2>
+          <p>ETH MUN is a comission of VSETH. You can reach us a at info [at] mun.ethz.ch.</p>
+          <p>Our current executive commitee:
+            <ul>
+              <li>Lal Sreeyuth, President</li>
+              <li>Anna-Brit Schaper, Vice President and Internal Relations</li>
+              <li>Nina Hain, External Relations</li>
+              <li>Simon Matoori, External Relations</li>
+              <li>Matija Zesko, Finance</li>
+              <li>Marc Fischer, IT</li>
+              <li>Lewin Könemann, IT</li>
+              <li>Cliff Li, Culture & Events</li>
+              <li>Alexander Müller, JUNES Delegate</li>
+              <li>Samuel Augustiny, JUNES Delegate</li>
+            </ul>
+          </p>
+          <p>Our postal address is:</p>
+          <p style="font-size: 0.8em;">ETH Model United Nations<br>
+          c/o VSETH<br>
+          Universitätsstrasse 6<br>
+          ETH Zentrum CAB E 13<br>
+          CH-8092 Zürich</p>
         </div>
+      </div>
 
-        <div class="col-md-4">
-
-          <h2>Speakers List</h2>
-
+      <div class="row">
+        <div class="col-md-12" id="sponsors">
+          <h2>Our Sponsors</h2>
+          <p><a href="http://www.bcg.ch/"><img style="float: right; margin: 5px 15% 5px 10px; width: 200px" src="BCG_Logo_compact_RGB.png"></a>We are delighted to know ourselfs supported by the Boston Consulting Group.</p>
         </div>
+      </div>
 
-      </div> <!-- /row -->
+      <div class="row">
+        <div class="col-md-12" id="practiceSessions">
+          <h2>Practice Session</h2>
+          <p>During the semster we usually pratice sessions in order to allow our members to prepare for international conferences. Until stated otherwise they are every Thursday in room HG D 5.2 at 19:15.</p>
+          <p>Our current topic is: Long-term effect of supplying arms for peacekeeping</p>
+        </div>
+      </div>
 
-      <!-- log -->
+      <div class="row">
+        <div class="col-md-12" id="zumun">
+          <h2>ZuMUN</h2>
+          <p><a href="http://www.zumun.ch/"><img style="float: right; margin: 5px 15% 5px 10px; width: 200px" src="logoNotSubtitled.png"></a>Together with the MUN team of the University of Zurich we are organizing a MUN Conference in Zurich. It is called ZuMUN. Click the Logo to find out more.</p>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-md-12">
-          <h2>Log</h2>
+          <h2>Under construction</h2>
+          <p>You haven't found what you were looking for?</p>
+          <p>Our old website has acompanied us for quite some time, but it became necceary to replace it. We are still working on the new one and some areas might not have been finished yet.</p>
         </div>
-      </div> <!-- /row -->
+      </div>
 
     </div> <!-- /container -->
-
-    <!-- Modals -->
-    <div class="modal fade" id="NewSpeakersList" tabindex="-1" role="dialog" aria-labelledby="NewSpeakersListLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
-            <h4 class="modal-title" id="NewSpeakersListLabel">Add new Speakers List</h4>
-          </div>
-          <div class="modal-body">
-            <form>
-            <div class="form-group">
-              <label for="new-speakers-list-name">Name:</label>
-              <input id="new-speakers-list-name" placeholder="Speakers List Name..." type="text" class="form-control">
-            </div>  
-            <div class="form-group">
-              <label for="new-speakers-list-duration">Speech duration [s]:</label>
-              <input id="new-speakers-list-duration" type="number" class="form-control">
-            </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button id="new-speakers-list-add" type="button" class="btn btn-primary">Add</button>
-          </div>
+    <footer style="width: 100%; border: solid; border-color: #e7e7e7; border-width: 1px 0 0; background-color: white; padding: 5px 0">
+      <div class="container-fluid" style="width: 70%">
+        <div style="float: left;   display: table;
+  height: 35px;">
+          <p style="display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; font-size: 1em">Reach us at info [at] mun.ethz.ch</p>
+        </div>
+        <div style="float: right;">
+          <a href="http://www.vseth.ethz.ch"><img style="height: 35px" src="kommissionen_VSETH_english.png"></a>
         </div>
       </div>
-    </div>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="jquery-1.11.2.min.js"><\/script>')</script>
 
-    <div class="modal fade" id="Motions" tabindex="-1" role="dialog" aria-labelledby="MotionsLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="MotionsLabel">Motions</h4>
-          </div>
-          <div class="modal-body">
-            <div class="pull-left" style="border-right: 1px solid #e5e5e5; padding-right: 10px; width: 50%;">
-              <h5>New Motion</h5>
-              <form>
-              <div class="form-group">
-                <label for="usr">Type</label>
-                <div class="radio">
-                  <label><input type="radio" name="new-motion-type">Moderated Caucus</label>
-                </div>
-                <div class="radio">
-                  <label><input type="radio" name="new-motion-type">Unmoderated Caucus</label>
-                </div>
-                <div class="radio">
-                  <label><input type="radio" name="new-motion-type">Other</label>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="usr">Name:</label>
-                <input type="text" class="form-control" id="usr">
-              </div>  
-              <div class="form-group">
-                <label for="usr">Duration:</label>
-                <input type="number" class="form-control" id="usr">
-              </div>
-              <button type="button" class="btn btn-primary">Add</button>
-              </form>
-            </div>
+        <script src="bootstrap.min.js"></script>
 
-            <div class="pull-right" style="padding-left: 10px; width: 50%;">
-              <h5>Vote on Motions</h5>
-            </div>
-
-            <div class="clearfix"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Add</button>
-          </div>
-        </div>
-      </div>
-    </div>
-      <script data-main="js/main" src="js/vendor/require.js"></script>
+        <script src="main.js"></script>
     </body>
 </html>
