@@ -57,8 +57,8 @@ function Motion(topic, proposedBy, s, type, listDuration, speechDuration) {
 
 	//vote results
 	this.votesFor = -1;
-	this.overwhelmingMayority = false;
-	this.simpleMayority = -1;
+	this.overwhelmingMajority = false;
+	this.simpleMajority = -1;
 
 	switch(this.type)
 	{
@@ -105,16 +105,16 @@ Motion.prototype.isExtendable = function(){
 		   && this.extended == false;
 };
 
-Motion.prototype.extend = function(overwhelmingMayority, simpleMayority, inFavor, time){
+Motion.prototype.extend = function(overwhelmingMajority, simpleMajority, inFavor, time){
 	var result = false;
 	if (this.isExtendable())
 	{
-		if(overwhelmingMayority)
+		if(overwhelmingMajority)
 		{
 			this.extended = true;
 			this.extensionTime = time;
 			result = true;
-		} else if(inFavor >= simpleMayority)
+		} else if(inFavor >= simpleMajority)
 		{
 			this.extended = true;
 			this.extensionTime = time;
@@ -139,18 +139,18 @@ Motion.prototype.delete = function(){
 	this.state = MotionStates.DELETED;
 };
 
-Motion.prototype.vote = function(overwhelmingMayority, simpleMayority, inFavor){
+Motion.prototype.vote = function(overwhelmingMajority, simpleMajority, inFavor){
 	var result = false;
-	if(overwhelmingMayority)
+	if(overwhelmingMajority)
 	{
 		this.state = MotionStates.VOTED_PASSED;
-		this.overwhelmingMayority = true;
+		this.overwhelmingMajority = true;
 		result = true;
-	} else if(inFavor >= simpleMayority)
+	} else if(inFavor >= simpleMajority)
 	{
 		this.state = MotionStates.VOTED_PASSED;
 		this.votesFor = inFavor;
-		this.simpleMayority = simpleMayority;
+		this.simpleMajority = simpleMajority;
 		result = true;
 	} else
 	{
@@ -170,8 +170,8 @@ Motion.prototype.toSimpleObject = function()
 			   proposedBy: this.proposedBy,
 			   id: this.id,
 			   votesFor: this.votesFor,
-			   overwhelmingMayority: this.overwhelmingMayority,
-			   simpleMayority: this.simpleMayority,
+			   overwhelmingMajority: this.overwhelmingMajority,
+			   simpleMajority: this.simpleMajority,
 			   extended: this.extended,
 			   extensionTime: this.extensionTime};
 	if (this.speakerslist != undefined)
@@ -455,11 +455,11 @@ function SpeakersList(name, duration, s, listDuration, motion){
 
 }
 
-SpeakersList.prototype.extend = function(overwhelmingMayority, inFavor, time){
+SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
 	if(this.isMotion())
 	{
-		this.startedForModeratedCaucus.extend(overwhelmingMayority,
-											  this.session.getSimpleMayority(),
+		this.startedForModeratedCaucus.extend(overwhelmingMajority,
+											  this.session.getSimpleMajority(),
 											  inFavor,
 											  time);
 		this.listDuration += 60 * this.startedForModeratedCaucus.extensionTime;
@@ -786,7 +786,7 @@ Session.prototype.getNumberOfAttendees = function() {
 	return Object.keys(this.attendees).length;
 };
 
-Session.prototype.getSimpleMayority = function() {
+Session.prototype.getSimpleMajority = function() {
 	return Math.ceil((this.getNumberOfAttendees()+1) / 2);
 };
 
@@ -906,9 +906,9 @@ Session.prototype.deleteMotion = function(id) {
 };
 
 
-Session.prototype.voteMotion = function(id, overwhelmingMayority, inFavor) {
+Session.prototype.voteMotion = function(id, overwhelmingMajority, inFavor) {
 	var motion = this.getMotionById(id);
-	return motion.vote(overwhelmingMayority, this.getSimpleMayority(), inFavor);
+	return motion.vote(overwhelmingMajority, this.getSimpleMajority(), inFavor);
 };
 
 var muntoolJSONLoader = {};
@@ -943,8 +943,8 @@ muntoolJSONLoader.load = function(json)
 								e.speechDuration);
 		motion.id = e.id;
 		motion.votesFor = e.votesFor;
-		motion.overwhelmingMayority = e.overwhelmingMayority;
-		motion.simpleMayority = e.simpleMayority;
+		motion.overwhelmingMajority = e.overwhelmingMajority;
+		motion.simpleMajority = e.simpleMajority;
 		motion.state = e.state;
 		motion.extended = e.extended;
 		motion.extensionTime = e.extensionTime;

@@ -143,7 +143,7 @@ app.controller('attendanceListController', function($scope, munSession)
   {
     $scope.attendees = munSession.getAttendees();
     $scope.numAtendees = munSession.getNumberOfAttendees();
-    $scope.simplemayority = munSession.getSimpleMayority();
+    $scope.simplemajority = munSession.getSimpleMajority();
   }
   update();
 
@@ -392,7 +392,7 @@ app.controller('unmoderatedCaucusModalController', function($scope, $modalInstan
   };
 
   $scope.vote = function(){
-    var passed = motion.extend($scope.overwhelmingMayority,
+    var passed = motion.extend($scope.overwhelmingMajority,
                                $scope.inFavor, $scope.duration);
     if (passed)
     {
@@ -436,7 +436,7 @@ app.controller('extendSpeaerslistModalController', function($scope, $modalInstan
   };
 
   $scope.vote = function () {
-    $scope.currentSpeakersList.extend($scope.overwhelmingMayority,
+    $scope.currentSpeakersList.extend($scope.overwhelmingMajority,
                                       $scope.inFavor, $scope.duration);
     $modalInstance.close();
   };
@@ -447,10 +447,10 @@ app.controller('motionsVoteModalController', function($scope, $modalInstance, mu
 {
   $scope.MotionTypes = munSession.constants.MotionTypes;
   function update(){
-    $scope.simpleMayority = munSession.getSimpleMayority();
+    $scope.simpleMajority = munSession.getSimpleMajority();
     $scope.openMotions = munSession.getOpenMotions();    
     $scope.currentMotion = undefined;
-    $scope.overwhelmingMayority = false;
+    $scope.overwhelmingMajority = false;
     if ($scope.openMotions.length > 0)
       $scope.currentMotion = $scope.openMotions[0];
   }
@@ -464,11 +464,11 @@ app.controller('motionsVoteModalController', function($scope, $modalInstance, mu
       $scope.currentMotion = $scope.openMotions[0];
     else
       $scope.currentMotion = undefined;
-    $scope.overwhelmingMayority = false;
+    $scope.overwhelmingMajority = false;
   };
 
   $scope.vote = function() {
-    var passed = munSession.voteMotion($scope.currentMotion.id, $scope.overwhelmingMayority, $scope.inFavor);
+    var passed = munSession.voteMotion($scope.currentMotion.id, $scope.overwhelmingMajority, $scope.inFavor);
     if (passed)
     {
       $modalInstance.close($scope.currentMotion.id);

@@ -38,7 +38,6 @@ Running `grunt test` will run the unit tests with karma.
 - Speakers-List-names too long
 - bold effect on speakerslist distorts circles
 - reset sometimes not working
-- middle coloum broader, speech coloum smaller
 - Wall-Clock
 - Kreise auch in Dropdown
 - Automate closed Speakerslist

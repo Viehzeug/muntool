@@ -47,3 +47,7 @@ body, html, .mainContainer, .mainRow {
 body {
     padding-top: 50px;
 }
+
+/*::-webkit-scrollbar { 
+    display: none; 
+}*/
