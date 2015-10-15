@@ -206,6 +206,10 @@ function hashCode(str){
     return hash;
 }
 
+var AttendeeStates = {};
+AttendeeStates.ACTIVE = 0;
+AttendeeStates.LEFT = 1;
+
 /**
  * Attendee of the session that was recognized.
  * @class
@@ -255,9 +259,55 @@ function Attendee(name, s){
 			return generateId(name, session);
 	}
 
+	this.status = AttendeeStates.ACTIVE;
 	this.name = name;
 	this.attendeeId = generateId(name, s);
 	this.session = s;
+}
+
+Attendee.prototype.isActive = function() {
+	return this.status == AttendeeStates.ACTIVE;
+}
+
+Attendee.prototype.reenter = function(){
+	this.status = AttendeeStates.ACTIVE;	
+};
+
+Attendee.prototype.leave = function() {
+	this.status = AttendeeStates.LEFT;
+	var self = this;
+	this.session.speakerslists.forEach(function(sl){
+		
+		var indizes = [];
+		for (var i = 0; i < sl.speeches.length; i++) {
+			var speech = sl.speeches[i];
+			if (speech.speaker == self &&
+				speech.isUpcoming()) {
+				delete speech;
+				indizes.push(i);
+			}
+
+		}
+
+		for (var i = 0; i < indizes.length; i++) {
+			var index = indizes[i];
+			sl.speeches.splice(index, 1);
+			for (var j = i+1; j < indizes.length; j++) {
+				indizes[j]--;
+			};
+		};
+
+	});
+
+	this.session.motions.forEach(function(m){
+		if (m.proposedBy == self &&
+			!m.closed())
+			m.delete();
+	});
+
+	this.session.updateAttendeeHash();
+	this.session.updateSpeakerslistsHashCode();
+
 }
 
 Attendee.prototype.getNumberOfSpeeches = function()
@@ -287,7 +337,8 @@ Attendee.prototype.getNumberOfSpeechesOnCurrentList = function()
 Attendee.prototype.toSimpleObject = function()
 {
 	return {name: this.name,
-			attendeeId: this.attendeeId};
+			attendeeId: this.attendeeId,
+			status: this.status};
 };
 
 Attendee.prototype.toJSON = function()
@@ -618,12 +669,14 @@ function Session(){
 	this.constants.SessionModes = SessionModes;
 	this.constants.SpeechStates = SpeechStates;
 	this.constants.MotionStates = MotionStates;
+	this.constants.AttendeeStates = AttendeeStates;
 
 }
 
 Session.prototype.toSimpleObject = function()
 {
-	return {attendees: this.getAttendees().map(function(e){ return e.toSimpleObject();}),
+	var self = this;
+	return {attendees: Object.keys(this.attendees).map(function(e){ return self.attendees[e].toSimpleObject();}),
 			motions: this.motions.map(function(e){ return e.toSimpleObject();}),
 			speakerslists: this.speakerslists.map(function(e){ return e.toSimpleObject();}),
 			currentSpeakersListId: this.currentSpeakersListId};
@@ -763,9 +816,12 @@ Session.prototype.newSpeakersList = function(name, duration, listDuration){
  * @memberOf module:munToolLib~Session
  */
 Session.prototype.newSpeaker = function(attendeeId) {
-	this.currentSpeakersList().add(this.attendees[attendeeId]);
-	this.log('added ' + attendeeId + 'to the speakerslist');
-	this.updateSpeakerslistsHashCode();
+	var attendee = this.attendees[attendeeId];
+	if (attendee.isActive()) {
+		this.currentSpeakersList().add(this.attendees[attendeeId]);
+		this.log('added ' + attendeeId + 'to the speakerslist');
+		this.updateSpeakerslistsHashCode();		
+	}
 };
 
 Session.prototype.newMotion = function(type, proposedBy, topic, listDuration, speechDuration) {
@@ -773,7 +829,10 @@ Session.prototype.newMotion = function(type, proposedBy, topic, listDuration, sp
 };
 
 Session.prototype.updateAttendeeHash = function(){
-	var str = Object.keys(this.attendees).join();
+	var self = this;
+	var str = Object.keys(this.attendees).map(function(e){
+		return self.attendees[e].toJSON();
+	}).join();
 	this.attendeesHashCode = hashCode(str);
 };
 
@@ -783,7 +842,7 @@ Session.prototype.updateSpeakerslistsHashCode = function(){
 };
 
 Session.prototype.getNumberOfAttendees = function() {
-	return Object.keys(this.attendees).length;
+	return this.getAttendees().length;
 };
 
 Session.prototype.getSimpleMajority = function() {
@@ -834,9 +893,20 @@ Session.prototype.getOpenMotions = function() {
  */
 Session.prototype.newAttendee = function(name)
 {
-	var a = new Attendee(name, this);
-	this.attendees[a.attendeeId] = a;
-	this.log(name + ' (' + a.attendeeId + ') entered the debate');
+	//find out wheter the attendee was already here, but left
+	var self = this;
+	var left = Object.keys(this.attendees).filter(function(e){
+		var attendee = self.attendees[e];
+		return !attendee.isActive() && attendee.name == name;
+	});
+	if (left.length > 0)
+	{
+		this.attendees[left[0]].reenter();
+	} else {
+		var a = new Attendee(name, this);
+		this.attendees[a.attendeeId] = a;
+		this.log(name + ' (' + a.attendeeId + ') entered the debate');
+	}
 	this.updateAttendeeHash();
 };
 
@@ -852,7 +922,7 @@ Session.prototype.getAttendees = function()
 {
 	var attendees = [];
 	var self = this;
-	Object.keys(this.attendees).forEach(function (key) {
+	this.getAttendeeIds().forEach(function (key) {
 		attendees.push(self.attendees[key]);
 	});
 	attendees.sort(function(a,b){
@@ -877,7 +947,10 @@ Session.prototype.getAttendeeById = function(id)
  */
 Session.prototype.getAttendeeIds = function()
 {
-	return Object.keys(this.attendees);
+	var self = this;
+	return Object.keys(this.attendees).filter(function(e){
+		return self.attendees[e].isActive();
+	});
 }
 
 /**
@@ -892,9 +965,9 @@ Session.prototype.removeAttendeeById = function(id)
 {
 	var a = this.attendees[id];
 	//TODO handle error case if there is no such id
-	delete this.attendees[id];
-	log(a.name + ' (' + a.attendeeId + ') left the debate');
-	this.updateAttendeeHash();
+	// delete this.attendees[id];
+	this.attendees[id].leave();
+	this.log(a.name + ' (' + a.attendeeId + ') left the debate');
 };
 
 
@@ -919,8 +992,10 @@ muntoolJSONLoader.load = function(json)
 
 	session.currentSpeakersListId = obj.currentSpeakersListId;
 	session.attendees = {};
-	obj.attendees.forEach(function(e){		session.attendees[e.attendeeId] = new Attendee(e.name, session);
+	obj.attendees.forEach(function(e){
+		session.attendees[e.attendeeId] = new Attendee(e.name, session);
 		session.attendees[e.attendeeId].attendeeId = e.attendeeId;
+		session.attendees[e.attendeeId].status = e.status;
 	});
 	session.speakerslists = [];
 	obj.speakerslists.forEach(function(e){

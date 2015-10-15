@@ -17,7 +17,7 @@ Running `grunt test` will run the unit tests with karma.
 
 
 #TODO
-- **Delete from Attendence-List**
+- **Delete Speech**
 - **ID for Speakers-List**
 - **Close moderated Caucuses**
 - **display Voteing Results**
@@ -37,3 +37,4 @@ Running `grunt test` will run the unit tests with karma.
 	- rework save system
 - Automate closed Speakerslist
 - **unmod timer: show topic**
+- tool starts with NaN:NaN when loading and no current speech

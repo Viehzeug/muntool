@@ -80,12 +80,16 @@
           </div><!-- /padded-row -->
           <div style="height: 70%; overflow-y: scroll;">
             <ul id="attendance-list">
-              <li ng-repeat="a in attendees"> {{a.name}} <div class="numberCircle">{{a.getNumberOfSpeeches()}}</div>
+              <li ng-repeat="a in attendees"> {{a.name}}
+
+              <span class="remove glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeattendee(a.attendeeId)"></span>
+
+              <div class="numberCircle">{{a.getNumberOfSpeeches()}}</div>
 
               <div class="numberCircle">{{a.getNumberOfSpeechesOnCurrentList()}}
               </div>
 
-              <!-- <span class="remove glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeattendee(a.attendeeId)"></span> -->
+              
               </li>
             </ul>
           </div>
@@ -211,7 +215,6 @@
             </div>
           </div>
           </script>
-
             <div angucomplete-alt id="speakers-list-add-speaker-autocomplete" placeholder="Add to speakers list..." maxlength="10" pause="100" selected-object="newSpeaker" local-data="attendees" search-fields="name" title-field="name" minlength="1" input-class="form-control" match-class="highlight" clear-selected="true" template-url="/custom-speakers-dropdown.html"></div>
         </div>
 

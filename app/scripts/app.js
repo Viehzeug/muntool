@@ -157,6 +157,7 @@ app.controller('attendanceListController', function($scope, munSession)
     $scope.attendees = munSession.getAttendees();
     $scope.numAtendees = munSession.getNumberOfAttendees();
     $scope.simplemajority = munSession.getSimpleMajority();
+    $scope.attendeesAutocomplete = munSession.autocompleteMembers();
   }
   update();
 
@@ -179,7 +180,6 @@ app.controller('attendanceListController', function($scope, munSession)
     {
       munSession.newAttendee(newAttendeeName);
     }
-    $scope.attendeesAutocomplete = munSession.autocompleteMembers();
   };
 
   $scope.removeattendee = function(id)
