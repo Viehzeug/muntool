@@ -288,6 +288,7 @@ Attendee.prototype.leave = function() {
 			}
 
 		}
+		//TODO use a common delete funtion
 
 		for (var i = 0; i < indizes.length; i++) {
 			var index = indizes[i];
@@ -353,7 +354,7 @@ SpeechStates.CURRENT_RUNNING = 2;
 SpeechStates.CURRENT_DONE = 3;
 SpeechStates.DONE = 4;
 
-function Speech(speaker, duration, s) {
+function Speech(speaker, duration, s, sl) {
 	/*** OOP Constructs ***/
 	this.speaker = speaker;
 	this.duration = duration;
@@ -361,8 +362,20 @@ function Speech(speaker, duration, s) {
 	this.startTime = undefined;
 	this.session = s;
 	this.timeout = undefined;
-
+	this.speakerslist = sl;
 }
+
+Speech.prototype.delete = function(){
+	if(this.isUpcoming())
+	{ //TODO add speakerslist ppinter to speech and use this instead
+		for (var i = 0; i < this.speakerslist.speeches.length; i++) {
+			if (this.speakerslist.speeches[i] == this)
+				this.speakerslist.speeches.splice(i, 1);
+		}
+		this.session.updateSpeakerslistsHashCode();
+		delete this;
+	}
+};
 
 Speech.prototype.getHashCode = function(){
 	var str = this.speaker.attendeeId + this.duration +
@@ -597,7 +610,7 @@ SpeakersList.prototype.toJSON = function()
  */
 //TODO fix comment
 SpeakersList.prototype.add = function(speaker){
-	this.speeches.push(new Speech(speaker, this.duration, this.session));
+	this.speeches.push(new Speech(speaker, this.duration, this.session, this));
 	session.updateSpeakerslistsHashCode();
 };
 
@@ -1006,6 +1019,7 @@ muntoolJSONLoader.load = function(json)
 			var speech = new Speech(session.getAttendeeById(s.speaker), s.duration, session);
 			speech.state = s.state;
 			e.startTime = new Date(); //TODO use date
+			speech.speakerslist = list;
 			list.speeches.push(speech);
 		});
 		session.speakerslists.push(list);

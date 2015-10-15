@@ -17,7 +17,6 @@ Running `grunt test` will run the unit tests with karma.
 
 
 #TODO
-- **Delete Speech**
 - **ID for Speakers-List**
 - **Close moderated Caucuses**
 - **display Voteing Results**
