@@ -55,7 +55,7 @@
 
       <div class="nav navbar-nav navbar-right">
         <p style="font-size: 0.8em; text-align: right; padding: 5px;">Software still under developement.<br>
-           Please report spelling mistakes, bugs to <b>software@mun.ethz.ch</b>.<br>
+           Please report spelling mistakes and bugs to <b>software@mun.ethz.ch</b>.<br>
            Also feel free to send feature suggetions.</p>
       </div>
 
@@ -70,7 +70,7 @@
       <div class="row mainRow">
 
         <!-- Attendance Block -->
-        <div class="col-md-4" ng-controller="attendanceListController">
+        <div class="col-md-4" ng-controller="attendanceListController" id="attendanceListPanel">
           <h2>Attendance List</h2>
           <div class="padded-row">
             
@@ -173,7 +173,46 @@
 
 
          <div>
-            <div angucomplete-alt id="speakers-list-add-speaker-autocomplete" placeholder="Add to speakers list..." maxlength="10" pause="100" selected-object="newSpeaker" local-data="attendees" search-fields="name" title-field="name" minlength="1" input-class="form-control" match-class="highlight" clear-selected="true"></div>
+         <!-- TODO rename template and standardize it -->
+          <script type="text/ng-template" id="/custom-speakers-dropdown.html">
+          <div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
+           <p>This is custom</p>
+            <input ng-model="searchStr"
+              ng-disabled="disableInput"
+              type="text"
+              placeholder="{{placeholder}}"
+              ng-focus="onFocusHandler()"
+              class="{{inputClass}}"
+              ng-focus="resetHideResults()"
+              ng-blur="hideResults($event)"
+              autocapitalize="off"
+              autocorrect="off"
+              autocomplete="off"
+              ng-change="inputChangeHandler(searchStr)"/>
+            <div class="angucomplete-dropdown" ng-show="showDropdown">
+              <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
+              <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
+              <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">
+                <div ng-if="imageField" class="angucomplete-image-holder">
+                  <img ng-if="result.image && result.image != ''" ng-src="{{result.image}}" class="angucomplete-image"/>
+                  <div ng-if="!result.image && result.image != ''" class="angucomplete-image-default"></div>
+                </div>
+
+                <div class="angucomplete-title" ng-if="matchClass"><span ng-bind-html="result.title"></span>
+                  <div class="numberCircle">{{result.originalObject.getNumberOfSpeeches()}}</div>
+                  <div class="numberCircle">{{result.originalObject.getNumberOfSpeechesOnCurrentList()}}</div>
+                </div>
+
+                <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div> <!-- TODO remove me and other stuff depending on what is needed in this dropdown panel, - for now this is simply the standard code -->
+                
+                <div ng-if="matchClass && result.description && result.description != ''" class="angucomplete-description" ng-bind-html="result.description"></div>
+                <div ng-if="!matchClass && result.description && result.description != ''" class="angucomplete-description">{{result.description}}</div>
+              </div>
+            </div>
+          </div>
+          </script>
+
+            <div angucomplete-alt id="speakers-list-add-speaker-autocomplete" placeholder="Add to speakers list..." maxlength="10" pause="100" selected-object="newSpeaker" local-data="attendees" search-fields="name" title-field="name" minlength="1" input-class="form-control" match-class="highlight" clear-selected="true" template-url="/custom-speakers-dropdown.html"></div>
         </div>
 
         <div style="height: 40%; overflow-y: scroll;">

@@ -17,27 +17,23 @@ Running `grunt test` will run the unit tests with karma.
 
 
 #TODO
-
-- Delete from Attendence-List
-- ID for Speakers-List
-- Close oderated Caucuses
-- display Voteing Results
-- Timer-Tool
-- Scrolling List
-- Check Inputs (Time on Extensions)
+- **Delete from Attendence-List**
+- **ID for Speakers-List**
+- **Close moderated Caucuses**
+- **display Voteing Results**
+- **Timer-Tool**
+- **Scrolling List**
+- **Check Inputs (Time on Extensions)**
 - Rework code
 - Server/Client-Setup
 	- Frontend/Backend View
-- Scrolling Lists
-- unmod nicht als modal
+- **unmod nicht als modal**
 - parse UN-country-List
 - http://www.un.org/en/members/
 	- Flags
 	- Names
-- Speakers-List-names too long
-- bold effect on speakerslist distorts circles
-- reset sometimes not working
-- Kreise auch in Dropdown
+- **Speakers-List-names too long**
+- **reset sometimes not working**
+	- rework save system
 - Automate closed Speakerslist
-- unmod timer: show topic
-- countries can leave
+- **unmod timer: show topic**
