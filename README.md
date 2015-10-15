@@ -17,13 +17,11 @@ Running `grunt test` will run the unit tests with karma.
 
 
 #TODO
-- **ID for Speakers-List**
-- **Close moderated Caucuses**
+- **ID for Speakers-List and rework closing of lists -> add status**
 - **display Voteing Results**
 - **Timer-Tool**
-- **Scrolling List**
 - **Check Inputs (Time on Extensions)**
-- Rework code
+- restructure code
 - Server/Client-Setup
 	- Frontend/Backend View
 - **unmod nicht als modal**
@@ -31,9 +29,9 @@ Running `grunt test` will run the unit tests with karma.
 - http://www.un.org/en/members/
 	- Flags
 	- Names
-- **Speakers-List-names too long**
 - **reset sometimes not working**
 	- rework save system
-- Automate closed Speakerslist
+- Automate closeing of Speakerslist
 - **unmod timer: show topic**
 - tool starts with NaN:NaN when loading and no current speech
+- Autoscroll

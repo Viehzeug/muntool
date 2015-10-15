@@ -71,13 +71,15 @@
 
         <!-- Attendance Block -->
         <div class="col-md-4" ng-controller="attendanceListController" id="attendanceListPanel">
-          <h2>Attendance List</h2>
-          <div class="padded-row">
-            
-            <!-- Autocomplete Dropdown -->
-            <div angucomplete-alt id="attendance-list-add-autocomplete" placeholder="Add to attendance list..." maxlength="10" pause="100" selected-object="newAttendee" local-data="attendeesAutocomplete" search-fields="name" title-field="name" minlength="1" input-class="form-control" match-class="highlight" override-suggestions="true" clear-selected="true"></div>
+          <div style="height:auto">
+            <h2>Attendance List</h2>
+            <div class="padded-row">
+              
+              <!-- Autocomplete Dropdown -->
+              <div angucomplete-alt id="attendance-list-add-autocomplete" placeholder="Add to attendance list..." maxlength="10" pause="100" selected-object="newAttendee" local-data="attendeesAutocomplete" search-fields="name" title-field="name" minlength="1" input-class="form-control" match-class="highlight" override-suggestions="true" clear-selected="true"></div>
 
-          </div><!-- /padded-row -->
+            </div><!-- /padded-row -->
+          </div>
           <div style="height: 70%; overflow-y: scroll;">
             <ul id="attendance-list">
               <li ng-repeat="a in attendees"> {{a.name}}
@@ -94,9 +96,10 @@
             </ul>
           </div>
 
-          <p>Attendance: {{numAtendees}}</p>
-          <p>Simple Majority: {{simplemajority}}</p>
-
+          <div style="height: auto">
+            <p>Attendance: {{numAtendees}}</p>
+            <p>Simple Majority: {{simplemajority}}</p>
+          </div>
         </div> <!-- /Attendance Block -->
 
         <!-- Speakers List Block -->
@@ -105,7 +108,7 @@
 
           <p>
             <div class="dropdown">
-              <button id="speakers-lists-dropdown" class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">{{currentSpeakersList.name}}<span class="caret"></span></button>
+              <button style="max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" id="speakers-lists-dropdown" class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">{{currentSpeakersList.name}}<span class="caret"></span></button>
               <ul id="speakers-lists-dropdown-menu" class="dropdown-menu" role="menu" aria-labelledby="speakers-lists-dropdown">
                 <li ng-repeat="s in speakersLists" role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="changeSpeakersList(event, s)" data-speakerslist-id="{{s.name}}">{{s.name}}</a></li>
                 <li role="presentation" class="divider"></li>
@@ -113,15 +116,17 @@
               </ul>
             </div>
           </p>
+          <ul class="speakerslist-details">
+            <li>Speech Duration: {{currentSpeakersList.duration}} s</li>
+            <li>Speeches Done: {{currentSpeakersList.speechesDone()}}</li>
+            <li>Speeches Queued: {{currentSpeakersList.speechesUpcoming()}}</li>
+            <li ng-show="currentSpeakersList.hasTimelimit()">Speaking List Time: {{currentSpeakersList.listDuration/60}} min</li>
+            <li ng-show="currentSpeakersList.hasTimelimit()">Speeches Remaining: {{currentSpeakersList.speechesRemaining()}}</li>
+            <li ng-show="currentSpeakersList.isMotion()">Moderated Caucus by {{getProposer()}}</li>
+          </ul>
           <p>
-            Speech Duration: {{currentSpeakersList.duration}} s<br>
-            Speeches Done: {{currentSpeakersList.speechesDone()}}<br>
-            Speeches Queued: {{currentSpeakersList.speechesUpcoming()}}<br>
-            <span ng-show="currentSpeakersList.hasTimelimit()">Speaking List Time: {{currentSpeakersList.listDuration/60}} min<br>
-            Speeches Remaining: {{currentSpeakersList.speechesRemaining()}}<br></span>
-            <span ng-show="currentSpeakersList.isMotion()">Moderated Caucus by {{getProposer()}}<br>
-            </span>
             <button ng-show="currentSpeakersList.isExtendable()" class="btn" type="button" ng-click="openExtend()">Extend</button>
+            <button ng-show="currentSpeakersList.isCloseable()" class="btn" type="button" ng-click="close()">Close</button>
           </p>
 
           <script type="text/ng-template" id="extendSpeaerslistModal.html">
@@ -176,7 +181,7 @@
           </script>
 
 
-         <div>
+         <div ng-show="!currentSpeakersList.hasTimelimit() || currentSpeakersList.speechesRemaining() > 0">
          <!-- TODO rename template and standardize it -->
           <script type="text/ng-template" id="/custom-speakers-dropdown.html">
           <div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
@@ -232,7 +237,7 @@
 
         <!-- Right Block -->
         <div class="col-md-3">
-          <div ng-controller="speechController"> <!-- Speech Block -->
+          <div style="height: 45%" ng-controller="speechController"> <!-- Speech Block -->
             <h2>Speech</h2>
             <span style="font-size: 3em" id="speakers-list-control-timer">{{timeLeft}}</span>
             <p style="font-size: 1.2em">Current Speaker: {{currentSpeaker.name}}</p>
@@ -251,20 +256,22 @@
             </div>
           </div> <!-- /Speech Block -->
 
-          <div ng-controller="motionController">
+<!--           <div ng-controller="motionController">
             <h2>Motions</h2>
 
-            <div> <!-- Possible Motions -->
+            <div> <!-- Possible Motions - - >
               <h3>Possible Motions</h3>
               <ul>
                 <li ng-click="modCaucus()">Motion for Moderated Caucus</li>
                 <li ng-click="unmodCaucus()">Motion for Unmoderated Caucus</li>
               </ul>
             </div>
+          </div> -->
+          <div style="height: 40%">
           </div>
 
-          <div ng-controller="clockController">
-            <p>{{ clock | date:'H:mm'}}</p>
+          <div style="height: 15%; text-align: center; font-size: 2em;" ng-controller="clockController">
+            {{ clock | date:'H:mm'}}
           </div>
 
         </div><!-- /Right Block -->

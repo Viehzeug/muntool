@@ -217,6 +217,11 @@ app.controller('speakersListController', function($scope, $modal, munSession)
       return '';
   };
 
+  $scope.close = function(){
+     //todo move to appropiate location
+     munSession.closeCurrenSpeakersList();
+  };
+
   $scope.openExtend = function(){
     showExtendSpeaerslistModal($modal, munSession);
   };

@@ -462,7 +462,6 @@ Speech.prototype.secondsLeft = function(){
 	return Math.max(0, Math.round(this.duration - timeElapsed/1000));
 };
 
-
 /**
  * SpeakersList
  * @class
@@ -529,6 +528,10 @@ SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
 		this.listDuration += 60 * this.startedForModeratedCaucus.extensionTime;
 		this.session.updateSpeakerslistsHashCode();
 	}
+};
+
+SpeakersList.prototype.isCloseable = function(){
+	return this.name != 'General Speakers List';
 };
 
 SpeakersList.prototype.isExtendable = function(){
@@ -996,6 +999,13 @@ Session.prototype.voteMotion = function(id, overwhelmingMajority, inFavor) {
 	var motion = this.getMotionById(id);
 	return motion.vote(overwhelmingMajority, this.getSimpleMajority(), inFavor);
 };
+
+Session.prototype.closeCurrenSpeakersList = function(){
+	delete this.speakerslists[this.currentSpeakersListId]; //TODO make this better with Ids
+	this.speakerslists.splice(this.currentSpeakersListId, 1);
+	this.currentSpeakersListId = 0;
+	this.updateSpeakerslistsHashCode();
+}
 
 var muntoolJSONLoader = {};
 muntoolJSONLoader.load = function(json)
