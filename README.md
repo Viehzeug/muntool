@@ -35,3 +35,12 @@ Running `grunt test` will run the unit tests with karma.
 - **unmod timer: show topic**
 - tool starts with NaN:NaN when loading and no current speech
 - Autoscroll
+- Vote-Button should also add
+- #Speakrs from closed list
+- "individual speakers time" misspelled
+- pause button for timer
+- Add Extension to motion panel
+- make closed caucuses accessable (for extensions)
+- show which is the currently selected motion in voting panel
+- redesign voting panel
+- order in order disruptiveness
