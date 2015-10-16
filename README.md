@@ -5,7 +5,10 @@ version 0.12.1.
 
 ##Current Version
 
-Current Version: 0.1 - Inital Version tested at MUN session
+**Current Version:** 0.2 - Version for second test session; for changes see commits
+
+###
+0.1 - Inital Version tested at MUN session
 
 ## Build & development
 
