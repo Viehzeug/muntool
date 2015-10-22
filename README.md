@@ -42,7 +42,6 @@ Running `grunt test` will run the unit tests with karma.
 - tool starts with NaN:NaN when loading and no current speech
 - Autoscroll
 - Vote-Button should also add
-- "individual speakers time" misspelled
 - pause button for timer
 - Add Extension to motion panel
 - make closed caucuses accessable (for extensions)
