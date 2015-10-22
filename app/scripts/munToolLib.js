@@ -34,7 +34,7 @@ function Motion(topic, proposedBy, s, type, listDuration, speechDuration) {
 		var ids = session.motions.map(function(e){
 			return e.id;
 		});
-		if (ids.indexOf(id) == -1)
+		if (ids.indexOf(id.toString()) == -1)
 			return id;
 		else
 			return generateId(topic+' ', name, session);
@@ -91,11 +91,11 @@ Motion.prototype.getSpeakersList = function(){
 									  this.session,
 									  this.listDuration * 60,
 									  this);
-			this.session.speakerslists.push(sl);
+			this.session.speakerslists[sl.id] = sl;
 			this.session.updateSpeakerslistsHashCode();
 			this.speakerslist = sl;
 		}
-		return this.speakerslist.name;
+		return this.speakerslist.id;
 	}
 }
 
@@ -176,7 +176,7 @@ Motion.prototype.toSimpleObject = function()
 			   extensionTime: this.extensionTime};
 	if (this.speakerslist != undefined)
 	{
-		obj.speakerslist = this.speakerslist.name;
+		obj.speakerslist = this.speakerslist.id;
 	}
 	else
 	{
@@ -253,7 +253,7 @@ function Attendee(name, s){
 		//if it wasn't call generateId again
 		//the new timestamp should result in a new hash
 		var attendeeIds = session.getAttendeeIds();
-		if (attendeeIds.indexOf(id) == -1)
+		if (attendeeIds.indexOf(id.toString()) == -1)
 			return id;
 		else
 			return generateId(name, session);
@@ -276,8 +276,7 @@ Attendee.prototype.reenter = function(){
 Attendee.prototype.leave = function() {
 	this.status = AttendeeStates.LEFT;
 	var self = this;
-	this.session.speakerslists.forEach(function(sl){
-		
+	this.session.getAllSpeakersLists().forEach(function(sl){
 		var indizes = [];
 		for (var i = 0; i < sl.speeches.length; i++) {
 			var speech = sl.speeches[i];
@@ -303,7 +302,7 @@ Attendee.prototype.leave = function() {
 	this.session.motions.forEach(function(m){
 		if (m.proposedBy == self &&
 			!m.closed())
-			m.delete();
+			m.delete(); //TODO stop delting ship
 	});
 
 	this.session.updateAttendeeHash();
@@ -315,7 +314,7 @@ Attendee.prototype.getNumberOfSpeeches = function()
 {
 	var self = this;
 	var sum = 0;
-	this.session.speakerslists.forEach(function(e){
+	this.session.getAllSpeakersLists().forEach(function(e){
 		sum += self.getNumberOfSpeechesOnList(e);
 	});
 	return sum;
@@ -462,6 +461,10 @@ Speech.prototype.secondsLeft = function(){
 	return Math.max(0, Math.round(this.duration - timeElapsed/1000));
 };
 
+var SpeakersListStates = {};
+SpeakersListStates.OPEN = 0;
+SpeakersListStates.CLOSED = 1;
+
 /**
  * SpeakersList
  * @class
@@ -470,7 +473,21 @@ Speech.prototype.secondsLeft = function(){
  * @param  {Session} session - Current session.
  */
 function SpeakersList(name, duration, s, listDuration, motion){
-	/*** OOP Constructs ***/	
+	/*** OOP Constructs ***/
+
+	function generateId(name, session){
+		var str = name + Date.now();
+		var id = hashCode(str);		
+		//check if the Id was already used
+		//if it wasn't call generateId again
+		//the new timestamp should result in a new hash
+		var ids = Object.keys(session.speakerslists);
+		if (ids.indexOf(id.toString()) == -1)
+			return id;
+		else
+			return generateId(name + ' ', session);
+	}
+
 	/**
 	 * Name of the Speakerslist.
 	 * @name name
@@ -497,10 +514,12 @@ function SpeakersList(name, duration, s, listDuration, motion){
 	/*** OOP style constructor ***/
 	this.session = s;
 	this.name = name;
+	this.id = generateId(name, s);
 	this.duration = duration;
 	this.speeches = [];
 	this.currentSpeechId = -1;
 	this.startedForModeratedCaucus = motion;
+	this.state = SpeakersListStates.OPEN;
 	//listDuration == 0 <==> infinity
 	if(listDuration != undefined)
 	{
@@ -518,8 +537,12 @@ function SpeakersList(name, duration, s, listDuration, motion){
 
 }
 
+SpeakersList.prototype.close = function(){
+	this.state = SpeakersListStates.CLOSED;
+}
+
 SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
-	if(this.isMotion())
+	if(this.isExtendable())
 	{
 		this.startedForModeratedCaucus.extend(overwhelmingMajority,
 											  this.session.getSimpleMajority(),
@@ -531,7 +554,7 @@ SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
 };
 
 SpeakersList.prototype.isCloseable = function(){
-	return this.name != 'General Speakers List';
+	return this.session.generalSpeakersListId != this.id;
 };
 
 SpeakersList.prototype.isExtendable = function(){
@@ -572,7 +595,8 @@ SpeakersList.prototype.speechesRemaining = function(){
 
 SpeakersList.prototype.getHashCode = function(){
 	var str = this.name + this.duration +
-			  this.currentSpeechId;
+			  this.currentSpeechId
+			  + this.state;
 	str += this.speeches.map(function(s){
 		return s.getHashCode();
 	}).join();
@@ -585,7 +609,9 @@ SpeakersList.prototype.toSimpleObject = function()
 			   duration: this.duration,
 			   speeches: this.speeches.map(function(e){ return e.toSimpleObject();}),
 			   currentSpeechId: this.currentSpeechId,
-			   listDuration: this.listDuration};
+			   listDuration: this.listDuration,
+			   id: this.id,
+			   state: this.state};
 
 	if (this.startedForModeratedCaucus != undefined)
 	{
@@ -673,10 +699,11 @@ function Session(){
 	this.updateAttendeeHash();
 	
 	this.motions = [];
-	this.speakerslists = [];
+	this.speakerslists = {};
 	//add General Speakers List as speakers list
-	this.newSpeakersList('General Speakers List', 45, 0);
-	this.currentSpeakersListId = 0;
+	this.generalSpeakersListId =
+		this.newSpeakersList('General Speakers List', 45, 0);
+	this.currentSpeakersListId = this.generalSpeakersListId;
 	this.speakerslistsHashCode = '';
 	this.updateSpeakerslistsHashCode();
 
@@ -686,16 +713,20 @@ function Session(){
 	this.constants.SpeechStates = SpeechStates;
 	this.constants.MotionStates = MotionStates;
 	this.constants.AttendeeStates = AttendeeStates;
+	this.constants.SpeakersListStates = SpeakersListStates;
 
 }
 
 Session.prototype.toSimpleObject = function()
 {
 	var self = this;
-	return {attendees: Object.keys(this.attendees).map(function(e){ return self.attendees[e].toSimpleObject();}),
+	return {
+			attendees: Object.keys(this.attendees).map(function(e){ return self.attendees[e].toSimpleObject();}),
+			speakerslists: Object.keys(this.speakerslists).map(function(e){ return self.speakerslists[e].toSimpleObject();}),
 			motions: this.motions.map(function(e){ return e.toSimpleObject();}),
-			speakerslists: this.speakerslists.map(function(e){ return e.toSimpleObject();}),
-			currentSpeakersListId: this.currentSpeakersListId};
+			currentSpeakersListId: this.currentSpeakersListId,
+			generalSpeakersListId: this.generalSpeakersListId
+		};
 };
 
 Session.prototype.toJSON = function()
@@ -765,7 +796,7 @@ Session.prototype.autocompleteMembers = function(){
 	});
 
 	return members.filter(function(e){
-		return (attendees.indexOf(e) == -1);
+		return (attendees.indexOf(e.toString()) == -1);
 	}).map(function(v){
 		return {'name': v};
 	});	
@@ -792,19 +823,11 @@ Session.prototype.currentSpeakersList = function(){
  * @public
  * @memberOf module:munToolLib~Session
  */
-Session.prototype.setCurrentSpeakersList = function(name){
-	var l = this.speakerslists.map(function(e, index){
-		return {index: index, val:e};
-	}).filter(function(e){
-		return e.val.name == name;
-	});
-	if (l.length > 0)
-	{
-		this.currentSpeakersListId = l[0].index;
-	} else
-	{
-		//TODO raise error
-	}
+Session.prototype.setCurrentSpeakersList = function(id){
+	var speakerslistId = Object.keys(this.speakerslists);
+	if (speakerslistId.indexOf(id.toString()) != -1)
+		this.currentSpeakersListId = id;
+	//TODO else give some error
 };
 
 /**
@@ -817,10 +840,11 @@ Session.prototype.setCurrentSpeakersList = function(name){
  * @memberOf module:munToolLib~Session
  */
 Session.prototype.newSpeakersList = function(name, duration, listDuration){
-	this.speakerslists.push(new SpeakersList(name, duration, this, listDuration, undefined));
+	var sl = new SpeakersList(name, duration, this, listDuration, undefined);
 	this.log('opening speakerslist ' + name + 'with a speech duration of ' + duration);
-	//todo maybe reutrn id
+	this.speakerslists[sl.id] = sl;
 	this.updateSpeakerslistsHashCode();
+	return sl.id;
 };
 
 /**
@@ -853,7 +877,8 @@ Session.prototype.updateAttendeeHash = function(){
 };
 
 Session.prototype.updateSpeakerslistsHashCode = function(){
-	var str = this.speakerslists.map(function(e){ return e.getHashCode();}).join();
+	var self = this;
+	var str = Object.keys(this.speakerslists).map(function(e){ return self.speakerslists[e].getHashCode();}).join();
 	this.speakerslistsHashCode = hashCode(str);
 };
 
@@ -986,8 +1011,18 @@ Session.prototype.removeAttendeeById = function(id)
 	this.log(a.name + ' (' + a.attendeeId + ') left the debate');
 };
 
+Session.prototype.getAllSpeakersLists = function(){
+	var self = this;
+	return Object.keys(this.speakerslists).map(function(e){
+		return self.speakerslists[e];
+	});
+};
 
-
+Session.prototype.getOpenSpeakersLists = function(){
+	return this.getAllSpeakersLists().filter(function(e){
+		return e.state == SpeakersListStates.OPEN;
+	});
+};
 
 Session.prototype.deleteMotion = function(id) {
 	var motion = this.getMotionById(id);
@@ -1001,10 +1036,14 @@ Session.prototype.voteMotion = function(id, overwhelmingMajority, inFavor) {
 };
 
 Session.prototype.closeCurrenSpeakersList = function(){
-	delete this.speakerslists[this.currentSpeakersListId]; //TODO make this better with Ids
-	this.speakerslists.splice(this.currentSpeakersListId, 1);
-	this.currentSpeakersListId = 0;
-	this.updateSpeakerslistsHashCode();
+	var sl = this.currentSpeakersList();
+	if (sl.isCloseable())
+	{
+		this.currentSpeakersList().close();
+		this.currentSpeakersListId = this.generalSpeakersListId;
+		this.updateSpeakerslistsHashCode();		
+	}
+	//TODO error in else-case
 }
 
 var muntoolJSONLoader = {};
@@ -1014,16 +1053,19 @@ muntoolJSONLoader.load = function(json)
 	var session = new Session();
 
 	session.currentSpeakersListId = obj.currentSpeakersListId;
+	session.generalSpeakersListId = obj.generalSpeakersListId;
 	session.attendees = {};
 	obj.attendees.forEach(function(e){
 		session.attendees[e.attendeeId] = new Attendee(e.name, session);
 		session.attendees[e.attendeeId].attendeeId = e.attendeeId;
 		session.attendees[e.attendeeId].status = e.status;
 	});
-	session.speakerslists = [];
+	session.speakerslists = {};
 	obj.speakerslists.forEach(function(e){
 		var list = new SpeakersList(e.name, e.duration, session, e.listDuration);
 		list.currentSpeechId = e.currentSpeechId;
+		list.id = e.id;
+		list.state = e.state;
 		list.speeches = [];
 		e.speeches.forEach(function(s){
 			var speech = new Speech(session.getAttendeeById(s.speaker), s.duration, session);
@@ -1032,7 +1074,7 @@ muntoolJSONLoader.load = function(json)
 			speech.speakerslist = list;
 			list.speeches.push(speech);
 		});
-		session.speakerslists.push(list);
+		session.speakerslists[list.id] = list;
 	});
 
 	session.motions = [];
@@ -1049,22 +1091,12 @@ muntoolJSONLoader.load = function(json)
 		motion.extensionTime = e.extensionTime;
 		if (e.speakerslist != undefined)
 		{
-			var l = session.speakerslists.map(function(sl, index){
-				return {index: index, val:sl};
-			}).filter(function(sl){
-				return sl.val.name == e.speakerslist;
-			});
-			if (l.length > 0)
-			{
-				motion.speakerslist = l[0].val;
-				l[0].val.startedForModeratedCaucus = motion;
-			}
-			
+			//TODO rename to speakersListKey
+			motion.speakerslist = session.speakerslists[e.speakerslist];
 		} else
 		{
 			motion.speakerslist = undefined;
 		}
-
 
 		session.motions.push(motion);
 	});

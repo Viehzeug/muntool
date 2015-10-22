@@ -1,5 +1,9 @@
 # muntool
 
+This is the tool used by ETH MUN for their practice sessions. It was developed especally for this purpose and therfore builds on the rules of ETH MUN as well of the customs, developed during years of pratice sessions.
+
+The application is stuctured according to the MVC principle. Where angularjs is used vor V and C and a collction of javascript Objects that build the MUN Process in a somewhat OOP way.
+
 This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
 version 0.12.1.
 
@@ -7,7 +11,7 @@ version 0.12.1.
 
 **Current Version:** 0.2 - Version for second test session; for changes see commits
 
-###
+###Version History
 0.1 - Inital Version tested at MUN session
 
 ## Build & development
@@ -20,7 +24,6 @@ Running `grunt test` will run the unit tests with karma.
 
 
 #TODO
-- **ID for Speakers-List and rework closing of lists -> add status**
 - **display Voteing Results**
 - **Timer-Tool**
 - **Check Inputs (Time on Extensions)**
@@ -39,7 +42,6 @@ Running `grunt test` will run the unit tests with karma.
 - tool starts with NaN:NaN when loading and no current speech
 - Autoscroll
 - Vote-Button should also add
-- #Speakrs from closed list
 - "individual speakers time" misspelled
 - pause button for timer
 - Add Extension to motion panel

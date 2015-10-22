@@ -193,7 +193,7 @@ app.controller('speakersListController', function($scope, $modal, munSession)
 {
   function update()
   {
-    $scope.speakersLists = munSession.speakerslists;
+    $scope.speakersLists = munSession.getOpenSpeakersLists();
     $scope.currentSpeakersList = munSession.currentSpeakersList();
     $scope.attendees = munSession.getAttendees();
   }
@@ -203,7 +203,7 @@ app.controller('speakersListController', function($scope, $modal, munSession)
                 function(){ $scope.attendees = munSession.getAttendees(); },
                 true);
   $scope.$watch(function(){ return munSession.speakerslistsHashCode; },
-                function(){ $scope.speakersLists = munSession.speakerslists; },
+                function(){ $scope.speakersLists = munSession.getOpenSpeakersLists(); },
                 true);
   $scope.$watch(function(){ return munSession.currentSpeakersListId; },
                 function(){ $scope.currentSpeakersList = munSession.currentSpeakersList(); },
@@ -242,9 +242,9 @@ app.controller('speakersListController', function($scope, $modal, munSession)
     }
   };
 
-  $scope.changeSpeakersList = function(event, speakerslists)
+  $scope.changeSpeakersList = function(event, speakerslist)
   {
-    munSession.setCurrentSpeakersList(speakerslists.name);
+    munSession.setCurrentSpeakersList(speakerslist.id);
     update();
   };
 
