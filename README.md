@@ -46,5 +46,8 @@ Running `grunt test` will run the unit tests with karma.
 - Add Extension to motion panel
 - make closed caucuses accessable (for extensions)
 - show which is the currently selected motion in voting panel
-- redesign voting panel
-- order in order disruptiveness
+- **redesign voting panel**
+- **order in order disruptiveness**
+- **votes sometimes do not work**
+- todo facicon
+- todo config file
