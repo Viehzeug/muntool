@@ -1,0 +1,14 @@
+{
+  "name": "country_parser",
+  "version": "1.0.0",
+  "description": "Load countrylist from http://www.un.org/en/members/",
+  "main": "getCountries.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marc Fischer",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.19.0"
+  }
+}
