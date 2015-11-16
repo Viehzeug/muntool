@@ -1,210 +1,27 @@
+'use strict';
+
 /**
  * @module munToolLib
  */
-
-var SessionModes = {};
-SessionModes.SPEAKERSLIST = 0;
-SessionModes.SPEAKERSLIST_MOD = 1;
-SessionModes.UNMOD = 2;
-
-var MotionTypes = {};
-MotionTypes.UNMODERATED_CAUCUS = 0;
-MotionTypes.MODERATED_CAUCUS = 1;
-MotionTypes.OTHER = 2;
-
-var MotionStates = {};
-MotionStates.OPENED = 0;
-MotionStates.VOTED_PASSED = 1;
-MotionStates.VOTED_FAILED = 2;
-MotionStates.DONE = 3;
-MotionStates.DELETED = 4;
-MotionStates.VOTED_PASSED_EXTENDED = 5;
-
-
-//TODO statistik panel
-
-function Motion(topic, proposedBy, s, type, listDuration, speechDuration) {
-
-	function generateId(topic, name, session){
-		var str = topic + name + Date.now();
-		var id = hashCode(str);		
-		//check if the Id was already used
-		//if it wasn't call generateId again
-		//the new timestamp should result in a new hash
-		var ids = session.motions.map(function(e){
-			return e.id;
-		});
-		if (ids.indexOf(id.toString()) == -1)
-			return id;
-		else
-			return generateId(topic+' ', name, session);
-	}
-
-	this.topic = topic;
-	this.proposedBy = proposedBy;
-	this.session = s;
-	this.type = type;
-	this.listDuration = undefined;
-	this.speechDuration = undefined;
-	this.state = MotionStates.OPENED;
-	this.id = generateId(topic,
-						 this.session.getAttendeeById(proposedBy).name,
-						 this.session);
-	this.extended = false;
-	this.extensionTime = undefined;
-	this.speakerslist = undefined;
-	//TODO extension vote results
-
-	//vote results
-	this.votesFor = -1;
-	this.overwhelmingMajority = false;
-	this.simpleMajority = -1;
-
-	switch(this.type)
-	{
-		case MotionTypes.UNMODERATED_CAUCUS:
-			this.listDuration = listDuration;
-			break;
-
-		case MotionTypes.MODERATED_CAUCUS:
-			this.listDuration = listDuration;
-			this.speechDuration = speechDuration;
-			break;
-
-		case MotionTypes.OTHER:
-		default:
-			break;
-	}
-
-}
-
-Motion.prototype.getSpeakersList = function(){
-	if((this.state == MotionStates.VOTED_PASSED ||
-		this.state == MotionStates.VOTED_PASSED_EXTENDED ||
-	    this.state == MotionStates.DONE)
-	   && this.type == MotionTypes.MODERATED_CAUCUS)
-	{
-		if(this.speakerslist == undefined)
-		{
-			var sl = new SpeakersList(this.topic,
-									  this.speechDuration,
-									  this.session,
-									  this.listDuration * 60,
-									  this);
-			this.session.speakerslists[sl.id] = sl;
-			this.session.updateSpeakerslistsHashCode();
-			this.speakerslist = sl;
-		}
-		return this.speakerslist.id;
-	}
-}
-
-Motion.prototype.isExtendable = function(){
-	return (this.state == MotionStates.VOTED_PASSED ||
-		   this.state == MotionStates.DONE)
-		   && this.extended == false;
-};
-
-Motion.prototype.extend = function(overwhelmingMajority, simpleMajority, inFavor, time){
-	var result = false;
-	if (this.isExtendable())
-	{
-		if(overwhelmingMajority)
-		{
-			this.extended = true;
-			this.extensionTime = time;
-			result = true;
-		} else if(inFavor >= simpleMajority)
-		{
-			this.extended = true;
-			this.extensionTime = time;
-			result = true;
-		} else
-		{
-			this.extended = false;
-			this.extensionTime = undefined;
-			result = false;
-		}
-	}
-	return result;
-};
-
-Motion.prototype.complete = function(){
-	if (this.state == MotionStates.VOTED_PASSED ||
-		this.state == MotionStates.VOTED_PASSED_EXTENDED)
-		this.state = MotionStates.DONE;	
-};
-
-Motion.prototype.delete = function(){
-	this.state = MotionStates.DELETED;
-};
-
-Motion.prototype.vote = function(overwhelmingMajority, simpleMajority, inFavor){
-	var result = false;
-	if(overwhelmingMajority)
-	{
-		this.state = MotionStates.VOTED_PASSED;
-		this.overwhelmingMajority = true;
-		result = true;
-	} else if(inFavor >= simpleMajority)
-	{
-		this.state = MotionStates.VOTED_PASSED;
-		this.votesFor = inFavor;
-		this.simpleMajority = simpleMajority;
-		result = true;
-	} else
-	{
-		this.state = MotionStates.VOTED_FAILED;
-		result = false;
-	}
-	return result;
-};
-
-Motion.prototype.toSimpleObject = function()
-{
-	var obj = {topic: this.topic,
-			   type: this.type,
-			   listDuration: this.listDuration,
-			   speechDuration: this.speechDuration,
-			   state: this.state,
-			   proposedBy: this.proposedBy,
-			   id: this.id,
-			   votesFor: this.votesFor,
-			   overwhelmingMajority: this.overwhelmingMajority,
-			   simpleMajority: this.simpleMajority,
-			   extended: this.extended,
-			   extensionTime: this.extensionTime};
-	if (this.speakerslist != undefined)
-	{
-		obj.speakerslist = this.speakerslist.id;
-	}
-	else
-	{
-		obj.speakerslist = undefined;
-	}
-	return obj;
-
-};
-
-Motion.prototype.toJSON = function()
-{
-	return JSON.stringify(this.toSimpleObject());
-};
-
-
 
 //Java's String.hashCode()
 //source: http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 function hashCode(str){
     var hash = 0;
     if (str.length === 0) {return hash;}
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i); //TODO use other name than char
-        hash = ((hash<<5)-hash)+char; // jshint ignore:line
-        hash = hash & hash; // Convert to 32bit integer
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+c; // jshint ignore:line
+        // Convert to 32bit integer 
+        hash = hash & hash; // jshint ignore:line
     }
     return hash;
 }
+
+var SessionModes = {};
+SessionModes.SPEAKERSLIST = 0;
+SessionModes.SPEAKERSLIST_MOD = 1;
+SessionModes.UNMOD = 2;
 
 var AttendeeStates = {};
 AttendeeStates.ACTIVE = 0;
@@ -253,10 +70,14 @@ function Attendee(name, s){
 		//if it wasn't call generateId again
 		//the new timestamp should result in a new hash
 		var attendeeIds = session.getAttendeeIds();
-		if (attendeeIds.indexOf(id.toString()) == -1)
+		if (attendeeIds.indexOf(id.toString()) === -1)
+		{
 			return id;
+		}
 		else
+		{
 			return generateId(name, session);
+		}
 	}
 
 	this.status = AttendeeStates.ACTIVE;
@@ -266,8 +87,8 @@ function Attendee(name, s){
 }
 
 Attendee.prototype.isActive = function() {
-	return this.status == AttendeeStates.ACTIVE;
-}
+	return this.status === AttendeeStates.ACTIVE;
+};
 
 Attendee.prototype.reenter = function(){
 	this.status = AttendeeStates.ACTIVE;	
@@ -280,35 +101,38 @@ Attendee.prototype.leave = function() {
 		var indizes = [];
 		for (var i = 0; i < sl.speeches.length; i++) {
 			var speech = sl.speeches[i];
-			if (speech.speaker == self &&
-				speech.isUpcoming()) {
-				delete speech;
+			if (speech.speaker === self &&
+				speech.isUpcoming())
+			{
+				delete sl.speeches[i];
 				indizes.push(i);
 			}
 
 		}
 		//TODO use a common delete funtion
 
-		for (var i = 0; i < indizes.length; i++) {
-			var index = indizes[i];
+		for (var k = 0; k < indizes.length; k++) {
+			var index = indizes[k];
 			sl.speeches.splice(index, 1);
-			for (var j = i+1; j < indizes.length; j++) {
+			for (var j = k+1; j < indizes.length; j++) {
 				indizes[j]--;
-			};
-		};
+			}
+		}
 
 	});
 
 	this.session.motions.forEach(function(m){
-		if (m.proposedBy == self &&
+		if (m.proposedBy === self &&
 			!m.closed())
+		{
 			m.delete(); //TODO stop delting ship
+		}
 	});
 
 	this.session.updateAttendeeHash();
 	this.session.updateSpeakerslistsHashCode();
 
-}
+};
 
 Attendee.prototype.getNumberOfSpeeches = function()
 {
@@ -324,7 +148,7 @@ Attendee.prototype.getNumberOfSpeechesOnList = function(list)
 {
 	var self = this;
 	return list.speeches.filter(function(e){
-		return self.attendeeId == e.speaker.attendeeId;
+		return self.attendeeId === e.speaker.attendeeId;
 	}).length;
 };
 
@@ -368,11 +192,14 @@ Speech.prototype.delete = function(){
 	if(this.isUpcoming())
 	{ //TODO add speakerslist ppinter to speech and use this instead
 		for (var i = 0; i < this.speakerslist.speeches.length; i++) {
-			if (this.speakerslist.speeches[i] == this)
+			if (this.speakerslist.speeches[i] === this)
+			{
 				this.speakerslist.speeches.splice(i, 1);
+			}
 		}
 		this.session.updateSpeakerslistsHashCode();
-		delete this;
+		//TODO make better
+		delete this; // jshint ignore:line
 	}
 };
 
@@ -396,7 +223,7 @@ Speech.prototype.toJSON = function()
 };
 
 Speech.prototype.start = function(){
-	if (this.state == SpeechStates.CURRENT_UNSTARTED)
+	if (this.state === SpeechStates.CURRENT_UNSTARTED)
 	{
 		console.log('Speech by ' + this.speaker.name + ' now running');
 		this.state = SpeechStates.CURRENT_RUNNING;
@@ -415,27 +242,29 @@ Speech.prototype.start = function(){
 Speech.prototype.setCurrent = function(){
 	console.log('Speech by ' + this.speaker.name + ' is now the current speech');
 	if (this.state < SpeechStates.CURRENT_UNSTARTED)
+	{
 		this.state = SpeechStates.CURRENT_UNSTARTED;
-}
+	}
+};
 
 Speech.prototype.isRunning = function(){
-	return this.state == SpeechStates.CURRENT_RUNNING;
-}
+	return this.state === SpeechStates.CURRENT_RUNNING;
+};
 
 Speech.prototype.isUpcoming = function(){
-	return this.state == SpeechStates.UPCOMING ||
-		   this.state == SpeechStates.CURRENT_UNSTARTED;
+	return this.state === SpeechStates.UPCOMING ||
+		   this.state === SpeechStates.CURRENT_UNSTARTED;
 };
 
 Speech.prototype.isDone = function(){
-	return this.state == SpeechStates.CURRENT_DONE ||
-		   this.state == SpeechStates.DONE;
-}
+	return this.state === SpeechStates.CURRENT_DONE ||
+		   this.state === SpeechStates.DONE;
+};
 
 Speech.prototype.reset = function(){
 	if (this.state >= SpeechStates.CURRENT_UNSTARTED)
 	{
-		if (this.timeout != undefined)
+		if (this.timeout !== undefined)
 		{
 			clearTimeout(this.timeout);
 			this.timeout = undefined;
@@ -448,7 +277,7 @@ Speech.prototype.reset = function(){
 
 
 Speech.prototype.end = function(){
-	if (this.state == SpeechStates.CURRENT_RUNNING)
+	if (this.state === SpeechStates.CURRENT_RUNNING)
 	{
 		clearTimeout(this.timeout);
 	}
@@ -482,10 +311,14 @@ function SpeakersList(name, duration, s, listDuration, motion){
 		//if it wasn't call generateId again
 		//the new timestamp should result in a new hash
 		var ids = Object.keys(session.speakerslists);
-		if (ids.indexOf(id.toString()) == -1)
+		if (ids.indexOf(id.toString()) === -1)
+		{
 			return id;
+		}
 		else
+		{
 			return generateId(name + ' ', session);
+		}
 	}
 
 	/**
@@ -520,8 +353,8 @@ function SpeakersList(name, duration, s, listDuration, motion){
 	this.currentSpeechId = -1;
 	this.startedForModeratedCaucus = motion;
 	this.state = SpeakersListStates.OPEN;
-	//listDuration == 0 <==> infinity
-	if(listDuration != undefined)
+	//listDuration === 0 <==> infinity
+	if(listDuration !== undefined)
 	{
 		if (listDuration < 0)
 		{
@@ -539,7 +372,7 @@ function SpeakersList(name, duration, s, listDuration, motion){
 
 SpeakersList.prototype.close = function(){
 	this.state = SpeakersListStates.CLOSED;
-}
+};
 
 SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
 	if(this.isExtendable())
@@ -554,7 +387,7 @@ SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
 };
 
 SpeakersList.prototype.isCloseable = function(){
-	return this.session.generalSpeakersListId != this.id;
+	return this.session.generalSpeakersListId !== this.id;
 };
 
 SpeakersList.prototype.isExtendable = function(){
@@ -563,11 +396,11 @@ SpeakersList.prototype.isExtendable = function(){
 };
 
 SpeakersList.prototype.isMotion = function(){
-	return (this.startedForModeratedCaucus != undefined);
+	return (this.startedForModeratedCaucus !== undefined);
 };
 
 SpeakersList.prototype.hasTimelimit = function(){
-	return (this.listDuration != 0);
+	return (this.listDuration !== 0);
 };
 
 SpeakersList.prototype.speechesDone = function(){
@@ -583,7 +416,7 @@ SpeakersList.prototype.speechesUpcoming = function(){
 };
 
 SpeakersList.prototype.speechesRemaining = function(){
-	if (this.listDuration == 0)
+	if (this.listDuration === 0)
 	{
 		return 0;
 	} else
@@ -595,8 +428,8 @@ SpeakersList.prototype.speechesRemaining = function(){
 
 SpeakersList.prototype.getHashCode = function(){
 	var str = this.name + this.duration +
-			  this.currentSpeechId
-			  + this.state;
+			  this.currentSpeechId +
+			  this.state;
 	str += this.speeches.map(function(s){
 		return s.getHashCode();
 	}).join();
@@ -613,7 +446,7 @@ SpeakersList.prototype.toSimpleObject = function()
 			   id: this.id,
 			   state: this.state};
 
-	if (this.startedForModeratedCaucus != undefined)
+	if (this.startedForModeratedCaucus !== undefined)
 	{
 		obj.startedForModeratedCaucus = this.startedForModeratedCaucus.id;
 	} else 
@@ -640,7 +473,7 @@ SpeakersList.prototype.toJSON = function()
 //TODO fix comment
 SpeakersList.prototype.add = function(speaker){
 	this.speeches.push(new Speech(speaker, this.duration, this.session, this));
-	session.updateSpeakerslistsHashCode();
+	this.session.updateSpeakerslistsHashCode();
 };
 
 //todo comment me
@@ -665,20 +498,26 @@ SpeakersList.prototype.hasNextSpeech = function(){
 //TODO comment me
 SpeakersList.prototype.getNextSpeech = function(){
 	if (this.hasNextSpeech())
+	{
 		return this.speeches[this.currentSpeechId+1];
+	}
 };
 
 //TODO comment me
 SpeakersList.prototype.getCurrentSpeech = function(){
 	if (this.hasCurrentSpeech())
+	{
 		return this.speeches[this.currentSpeechId];
+	}
 };
 
 SpeakersList.prototype.advanceToNextSpeech = function(){
 	if (this.hasNextSpeech())
 	{
 		if (this.hasCurrentSpeech())
+		{
 			this.getCurrentSpeech().end();			
+		}
 		this.currentSpeechId++;
 		console.log('Going to speech ' + this.currentSpeechId);
 		this.getCurrentSpeech().setCurrent();
@@ -686,6 +525,197 @@ SpeakersList.prototype.advanceToNextSpeech = function(){
 	}
 };
 
+
+var MotionTypes = {};
+MotionTypes.UNMODERATED_CAUCUS = 0;
+MotionTypes.MODERATED_CAUCUS = 1;
+MotionTypes.OTHER = 2;
+
+var MotionStates = {};
+MotionStates.OPENED = 0;
+MotionStates.VOTED_PASSED = 1;
+MotionStates.VOTED_FAILED = 2;
+MotionStates.DONE = 3;
+MotionStates.DELETED = 4;
+MotionStates.VOTED_PASSED_EXTENDED = 5;
+
+
+//TODO statistik panel
+
+function Motion(topic, proposedBy, s, type, listDuration, speechDuration) {
+
+	function generateId(topic, name, session){
+		var str = topic + name + Date.now();
+		var id = hashCode(str);		
+		//check if the Id was already used
+		//if it wasn't call generateId again
+		//the new timestamp should result in a new hash
+		var ids = session.motions.map(function(e){
+			return e.id;
+		});
+		if (ids.indexOf(id.toString()) === -1)
+		{
+			return id;
+		}
+		else
+		{
+			return generateId(topic+' ', name, session);
+		}
+	}
+
+	this.topic = topic;
+	this.proposedBy = proposedBy;
+	this.session = s;
+	this.type = type;
+	this.listDuration = undefined;
+	this.speechDuration = undefined;
+	this.state = MotionStates.OPENED;
+	this.id = generateId(topic,
+						 this.session.getAttendeeById(proposedBy).name,
+						 this.session);
+	this.extended = false;
+	this.extensionTime = undefined;
+	this.speakerslist = undefined;
+	//TODO extension vote results
+
+	//vote results
+	this.votesFor = -1;
+	this.overwhelmingMajority = false;
+	this.simpleMajority = -1;
+
+	switch(this.type)
+	{
+		case MotionTypes.UNMODERATED_CAUCUS:
+			this.listDuration = listDuration;
+			break;
+
+		case MotionTypes.MODERATED_CAUCUS:
+			this.listDuration = listDuration;
+			this.speechDuration = speechDuration;
+			break;
+
+		case MotionTypes.OTHER: // jshint ignore:line
+		//fallthrough
+		default:
+			break;
+	}
+
+}
+
+Motion.prototype.getSpeakersList = function(){
+	if((this.state === MotionStates.VOTED_PASSED ||
+		this.state === MotionStates.VOTED_PASSED_EXTENDED ||
+	    this.state === MotionStates.DONE) &&
+	   this.type === MotionTypes.MODERATED_CAUCUS)
+	{
+		if(this.speakerslist === undefined)
+		{
+			var sl = new SpeakersList(this.topic,
+									  this.speechDuration,
+									  this.session,
+									  this.listDuration * 60,
+									  this);
+			this.session.speakerslists[sl.id] = sl;
+			this.session.updateSpeakerslistsHashCode();
+			this.speakerslist = sl;
+		}
+		return this.speakerslist.id;
+	}
+};
+
+Motion.prototype.isExtendable = function(){
+	return (this.state === MotionStates.VOTED_PASSED ||
+		   this.state === MotionStates.DONE) &&
+		   this.extended === false;
+};
+
+Motion.prototype.extend = function(overwhelmingMajority, simpleMajority, inFavor, time){
+	var result = false;
+	if (this.isExtendable())
+	{
+		if(overwhelmingMajority)
+		{
+			this.extended = true;
+			this.extensionTime = time;
+			result = true;
+		} else if(inFavor >= simpleMajority)
+		{
+			this.extended = true;
+			this.extensionTime = time;
+			result = true;
+		} else
+		{
+			this.extended = false;
+			this.extensionTime = undefined;
+			result = false;
+		}
+	}
+	return result;
+};
+
+Motion.prototype.complete = function(){
+	if (this.state === MotionStates.VOTED_PASSED ||
+		this.state === MotionStates.VOTED_PASSED_EXTENDED)
+	{
+		this.state = MotionStates.DONE;
+	}
+};
+
+Motion.prototype.delete = function(){
+	this.state = MotionStates.DELETED;
+};
+
+Motion.prototype.vote = function(overwhelmingMajority, simpleMajority, inFavor){
+	var result = false;
+	if(overwhelmingMajority)
+	{
+		this.state = MotionStates.VOTED_PASSED;
+		this.overwhelmingMajority = true;
+		result = true;
+	} else if(inFavor >= simpleMajority)
+	{
+		this.state = MotionStates.VOTED_PASSED;
+		this.votesFor = inFavor;
+		this.simpleMajority = simpleMajority;
+		result = true;
+	} else
+	{
+		this.state = MotionStates.VOTED_FAILED;
+		result = false;
+	}
+	return result;
+};
+
+Motion.prototype.toSimpleObject = function()
+{
+	var obj = {topic: this.topic,
+			   type: this.type,
+			   listDuration: this.listDuration,
+			   speechDuration: this.speechDuration,
+			   state: this.state,
+			   proposedBy: this.proposedBy,
+			   id: this.id,
+			   votesFor: this.votesFor,
+			   overwhelmingMajority: this.overwhelmingMajority,
+			   simpleMajority: this.simpleMajority,
+			   extended: this.extended,
+			   extensionTime: this.extensionTime};
+	if (this.speakerslist !== undefined)
+	{
+		obj.speakerslist = this.speakerslist.id;
+	}
+	else
+	{
+		obj.speakerslist = undefined;
+	}
+	return obj;
+
+};
+
+Motion.prototype.toJSON = function()
+{
+	return JSON.stringify(this.toSimpleObject());
+};
 
 /**
  * Session
@@ -787,16 +817,16 @@ Session.prototype.log = function (str)
 // extracted from wikipedia (https://en.wikipedia.org/wiki/Member_states_of_the_United_Nations) via:
 // countries = [];
 // $('table.wikitable > tbody > tr td:first-child a').each(function(){ console.log($(this).attr('title'))})
-// countries = countries.filter(function(e){ return (e != undefined && e != null);})
+// countries = countries.filter(function(e){ return (e !== undefined && e !== null);})
 // JSON.stirngify(countries)
 Session.prototype.autocompleteMembers = function(){
 
 	var attendees = this.getAttendees().map(function(e){
 		return e.name;
 	});
-
-	return members.filter(function(e){
-		return (attendees.indexOf(e.toString()) == -1);
+	//members is global
+	return members.filter(function(e){ // jshint ignore:line
+		return (attendees.indexOf(e.toString()) === -1);
 	}).map(function(v){
 		return {'name': v};
 	});	
@@ -825,8 +855,10 @@ Session.prototype.currentSpeakersList = function(){
  */
 Session.prototype.setCurrentSpeakersList = function(id){
 	var speakerslistId = Object.keys(this.speakerslists);
-	if (speakerslistId.indexOf(id.toString()) != -1)
+	if (speakerslistId.indexOf(id.toString()) !== -1)
+	{
 		this.currentSpeakersListId = id;
+	}
 	//TODO else give some error
 };
 
@@ -892,16 +924,18 @@ Session.prototype.getSimpleMajority = function() {
 
 Session.prototype.getMotionById = function(id) {
 	var filtered = this.motions.filter(function(e){
-		return (e.id == id);
+		return (e.id === id);
 	});
 	if (filtered.length > 0)
+	{
 		return filtered[0];
+	}
 };
 
 Session.prototype.getOpenMotions = function() {
 	var self = this;
 	return this.motions.filter(function(e){
-		return (e.state == MotionStates.OPENED);
+		return (e.state === MotionStates.OPENED);
 	}).map(function(e){
 		var obj = e.toSimpleObject();
 		obj.proposedByText = self.getAttendeeById(e.proposedBy).name;
@@ -916,13 +950,14 @@ Session.prototype.getOpenMotions = function() {
 				obj.typeText = "Moderated Caucus";
 				break;
 
-			case MotionTypes.OTHER:
+			case MotionTypes.OTHER: // jshint ignore:line
+			//fallthrough
 			default:
 				obj.typeText = "Motion";
 		}
 		return obj;
 	});
-}
+};
 
 /**
  * Adds a new Attendee to the session by a given name.
@@ -938,7 +973,7 @@ Session.prototype.newAttendee = function(name)
 	var self = this;
 	var left = Object.keys(this.attendees).filter(function(e){
 		var attendee = self.attendees[e];
-		return !attendee.isActive() && attendee.name == name;
+		return !attendee.isActive() && attendee.name === name;
 	});
 	if (left.length > 0)
 	{
@@ -970,13 +1005,13 @@ Session.prototype.getAttendees = function()
 		return a.name.localeCompare(b.name);
 	});
 	return attendees;
-}
+};
 
 //TODO comment me
 Session.prototype.getAttendeeById = function(id)
 {
 	return this.attendees[id];
-}
+};
 
 /**
  * Returns a list of the AttendeeIds.
@@ -992,7 +1027,7 @@ Session.prototype.getAttendeeIds = function()
 	return Object.keys(this.attendees).filter(function(e){
 		return self.attendees[e].isActive();
 	});
-}
+};
 
 /**
  * Remove an Attendee by the [Id]{@link module:munToolLib~Attendee#attendeeId}.
@@ -1020,7 +1055,7 @@ Session.prototype.getAllSpeakersLists = function(){
 
 Session.prototype.getOpenSpeakersLists = function(){
 	return this.getAllSpeakersLists().filter(function(e){
-		return e.state == SpeakersListStates.OPEN;
+		return e.state === SpeakersListStates.OPEN;
 	});
 };
 
@@ -1044,7 +1079,7 @@ Session.prototype.closeCurrenSpeakersList = function(){
 		this.updateSpeakerslistsHashCode();		
 	}
 	//TODO error in else-case
-}
+};
 
 var muntoolJSONLoader = {};
 muntoolJSONLoader.load = function(json)
@@ -1089,7 +1124,7 @@ muntoolJSONLoader.load = function(json)
 		motion.state = e.state;
 		motion.extended = e.extended;
 		motion.extensionTime = e.extensionTime;
-		if (e.speakerslist != undefined)
+		if (e.speakerslist !== undefined)
 		{
 			//TODO rename to speakersListKey
 			motion.speakerslist = session.speakerslists[e.speakerslist];

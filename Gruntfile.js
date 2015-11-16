@@ -473,6 +473,10 @@ module.exports = function (grunt) {
 
   grunt.registerTask('webapp', ['nwjs']);
 
+  grunt.registerTask('hint', [
+    'newer:jshint'
+  ]);
+
   //load new builder
   grunt.loadNpmTasks('grunt-nw-builder');
 };

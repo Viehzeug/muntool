@@ -14,21 +14,23 @@ if (!String.prototype.format) {
   String.prototype.format = function() {
     var args = arguments;
     return this.replace(/{(\d+)}/g, function(match, number) { 
-      return typeof args[number] != 'undefined'
-        ? args[number]
-        : match
+      return typeof args[number] !== 'undefined' ?
+         args[number] : match
       ;
     });
   };
 }
 
-var session; // jshint ignore:line
+var session;
 
 function formatTime(seconds)
 {
   var min = Math.floor(seconds/60) + ':';
   var sec = Math.floor(seconds%60) + '';
-  if (sec.length < 2) sec = '0' + sec;
+  if (sec.length < 2)
+  {
+    sec = '0' + sec;
+  }
   return min + sec;
 }
 
@@ -50,13 +52,14 @@ app.config(['localStorageServiceProvider', function(localStorageServiceProvider)
 }]);
 
 app.factory('munSession', function(localStorageService) {
-  if (session == undefined)
+  if (session === undefined)
   {
     var sessionJSON = localStorageService.get('session');
-    if (sessionJSON != undefined) {
-      session = muntoolJSONLoader.load(sessionJSON);
+    //TODO load from library
+    if (sessionJSON !== undefined) {
+      session = muntoolJSONLoader.load(sessionJSON); // jshint ignore:line
     } else {
-      session = new Session();
+      session = new Session(); // jshint ignore:line
     }
 
     //TODO
@@ -70,9 +73,45 @@ app.factory('munSession', function(localStorageService) {
   return session;
 });
 
-function showExtendSpeaerslistModal($modal, munSession)
+function showUnmoderatedCaucusModal($modal, munSession, motion)
 {
-    var newSpeakersListModal = $modal.open({
+  //var motionsVoteModal =
+  $modal.open({
+    animation: true,
+    templateUrl: 'unmoderatedCaucusModal.html',
+    controller: 'unmoderatedCaucusModalController',
+    resolve: {'motion': function(){return motion;}}
+  });  
+}
+
+function showVoteCaucusDialog($modal, munSession)
+{
+  var motionsVoteModal = $modal.open({
+    animation: true,
+    templateUrl: 'motionsVoteModal.html',
+    controller: 'motionsVoteModalController'
+  });
+
+  motionsVoteModal.result.then(function(motionId){
+    //motionId passed and is now to be executed
+    var motion = munSession.getMotionById(motionId);
+    if (motion.type === munSession.constants.MotionTypes.UNMODERATED_CAUCUS)
+    {
+      showUnmoderatedCaucusModal($modal, munSession, motion);
+    } else if (motion.type === munSession.constants.MotionTypes.MODERATED_CAUCUS)
+    {
+      var sl = motion.getSpeakersList();
+      munSession.setCurrentSpeakersList(sl);
+    }
+  }, function(){
+  });
+
+}
+
+function showExtendSpeaerslistModal($modal)
+{
+    //var newSpeakersListModal =
+    $modal.open({
       animation: true,
       templateUrl: 'extendSpeaerslistModal.html',
       controller: 'extendSpeaerslistModalController'
@@ -106,46 +145,15 @@ function showNewCaucusDialog($modal, munSession, defaultSelection)
     munSession.newMotion(caucus.type, caucus.proposedBy, caucus.topic,
                          caucus.duration, caucus.speechDuration);
     if (caucus.more)
+    {
       showNewCaucusDialog($modal, munSession, undefined);
-  }, function(dismissReason){
-    if (dismissReason == 'vote')
-      showVoteCaucusDialog($modal, munSession);
-  });
-}
-
-
-function showUnmoderatedCaucusModal($modal, munSession, motion)
-{
-  var motionsVoteModal = $modal.open({
-    animation: true,
-    templateUrl: 'unmoderatedCaucusModal.html',
-    controller: 'unmoderatedCaucusModalController',
-    resolve: {'motion': function(){return motion;}}
-  });  
-}
-
-function showVoteCaucusDialog($modal, munSession)
-{
-  var motionsVoteModal = $modal.open({
-    animation: true,
-    templateUrl: 'motionsVoteModal.html',
-    controller: 'motionsVoteModalController'
-  });
-
-  motionsVoteModal.result.then(function(motionId){
-    //motionId passed and is now to be executed
-    var motion = munSession.getMotionById(motionId);
-    if (motion.type == munSession.constants.MotionTypes.UNMODERATED_CAUCUS)
-    {
-      showUnmoderatedCaucusModal($modal, munSession, motion);
-    } else if (motion.type == munSession.constants.MotionTypes.MODERATED_CAUCUS)
-    {
-      var sl = motion.getSpeakersList();
-      munSession.setCurrentSpeakersList(sl);
     }
-  }, function(){
+  }, function(dismissReason){
+    if (dismissReason === 'vote')
+    {
+      showVoteCaucusDialog($modal, munSession);
+    }
   });
-
 }
 
 
@@ -212,9 +220,13 @@ app.controller('speakersListController', function($scope, $modal, munSession)
   $scope.getProposer = function()
   {
     if ($scope.currentSpeakersList.isMotion())
+    {
       return munSession.getAttendeeById($scope.currentSpeakersList.startedForModeratedCaucus.proposedBy).name;
+    }
     else
+    {
       return '';
+    }
   };
 
   $scope.close = function(){
@@ -231,12 +243,16 @@ app.controller('speakersListController', function($scope, $modal, munSession)
     switch(s.state)
     {
       case 0:
+      //fallthrough
       case 1:
         return 'speech-upcoming';
+      
       case 2:
         return 'speech-active';
-      case 3:
-      case 4:
+      
+      case 3: //fallthrough
+      case 4: // jshint ignore:line
+      //fallthrough
       default:
         return 'speech-done';
     }
@@ -359,10 +375,14 @@ app.controller('newCaucusModalController', function($scope, $modalInstance, munS
 {
   $scope.attendees = munSession.getAttendees();
   $scope.MotionTypes = munSession.constants.MotionTypes;
-  if (defaultSelection != undefined)
+  if (defaultSelection !== undefined)
+  {
     $scope.caucusType = defaultSelection;
+  }
   else
+  {
     $scope.caucusType = $scope.MotionTypes.UNMODERATED_CAUCUS;
+  }
 
   $scope.add = function() {
     $modalInstance.close({'type': $scope.caucusType,
@@ -404,7 +424,9 @@ app.controller('unmoderatedCaucusModalController', function($scope, $modalInstan
 
   $scope.cancel = function () {
     if ($scope.interval)
+    {
       $interval.cancel($scope.interval);
+    }
     $modalInstance.dismiss('cancel');
   };
 
@@ -469,18 +491,24 @@ app.controller('motionsVoteModalController', function($scope, $modalInstance, mu
     $scope.currentMotion = undefined;
     $scope.overwhelmingMajority = false;
     if ($scope.openMotions.length > 0)
+    {
       $scope.currentMotion = $scope.openMotions[0];
+    }
   }
   update();
 
   $scope.changeMotion = function(id){
     var filtered = $scope.openMotions.filter(function(e){
-      return (e.id == id);
+      return (e.id === id);
     });
     if (filtered.length > 0)
+    {
       $scope.currentMotion = $scope.openMotions[0];
+    }
     else
+    {
       $scope.currentMotion = undefined;
+    }
     $scope.overwhelmingMajority = false;
   };
 
@@ -526,7 +554,7 @@ app.controller('navigationController', function($scope, $modal, munSession) {
 
   $scope.reset = function()
   {
-    session = new Session();
+    session = new Session(); // jshint ignore:line
     setTimeout(function(){
       window.location.reload();
     }, 1005);
@@ -549,21 +577,15 @@ app.controller('motionController', function($scope, $modal, munSession) {
 
 });
 
-
 app.controller('clockController', function($scope, $timeout) {
     $scope.clock = "loading clock..."; // initialise the time variable
-    $scope.tickInterval = 1000 //ms
+    $scope.tickInterval = 1000; //ms
 
     var tick = function () {
-        $scope.clock = Date.now() // get the current time
+        $scope.clock = Date.now(); // get the current time
         $timeout(tick, $scope.tickInterval); // reset the timer
-    }
+    };
 
     // Start the timer
     $timeout(tick, $scope.tickInterval);
 });
-
-$(function(){
-  console.log($('#attendanceListPanel').height());
-});
-
