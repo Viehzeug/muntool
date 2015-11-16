@@ -41,6 +41,7 @@ Running `grunt test` will run the unit tests with karma.
 - **unmod timer: show topic**
 - tool starts with NaN:NaN when loading and no current speech
 - Autoscroll
+- Tests
 - Vote-Button should also add
 - pause button for timer
 - Add Extension to motion panel
@@ -49,5 +50,6 @@ Running `grunt test` will run the unit tests with karma.
 - **redesign voting panel**
 - **order in order disruptiveness**
 - **votes sometimes do not work**
-- todo facicon
+- todo favicon
 - todo config file
+	- logo
