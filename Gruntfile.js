@@ -362,7 +362,8 @@ module.exports = function (grunt) {
             '.htaccess',
             '*.html',
             'images/{,*/}*.{webp}',
-            'styles/fonts/{,*/}*.*'
+            'styles/fonts/{,*/}*.*',
+            'package.json'
           ]
         }, {
           expand: true,
@@ -405,6 +406,14 @@ module.exports = function (grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+    nwjs: {
+      options: {
+        platforms: ['win','osx'],
+        buildDir: './webkitbuilds'
+      },
+      src: ['./dist/*']
     }
   });
 
@@ -461,4 +470,9 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  grunt.registerTask('webapp', ['nwjs']);
+
+  //load new builder
+  grunt.loadNpmTasks('grunt-nw-builder');
 };
