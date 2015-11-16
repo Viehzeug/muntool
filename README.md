@@ -31,8 +31,7 @@ Running `grunt test` will run the unit tests with karma.
 - Server/Client-Setup
 	- Frontend/Backend View
 - **unmod nicht als modal**
-- parse UN-country-List
-- http://www.un.org/en/members/
+- parse UN-country-List: http://www.un.org/en/members/
 	- Flags
 	- Names
 - **reset sometimes not working**
