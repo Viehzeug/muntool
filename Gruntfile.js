@@ -19,6 +19,8 @@ module.exports = function (grunt) {
     cdnify: 'grunt-google-cdn'
   });
 
+  grunt.loadNpmTasks('grunt-bower-requirejs');
+
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
@@ -30,6 +32,15 @@ module.exports = function (grunt) {
 
     // Project settings
     yeoman: appConfig,
+
+    bowerRequirejs: {
+      target: {
+        rjsConfig: 'app/main.js',
+        options: {
+          exclude: ['bootstrap']
+        }
+      }
+    },
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
@@ -127,7 +138,7 @@ module.exports = function (grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          '<%= yeoman.app %>/scripts/{,*/}*.js'
+          '<%= yeoman.app %>/scripts/**/*.js'
         ]
       },
       test: {
@@ -183,7 +194,8 @@ module.exports = function (grunt) {
     wiredep: {
       app: {
         src: ['<%= yeoman.app %>/index.html'],
-        ignorePath:  /\.\.\//
+        ignorePath:  /\.\.\//,
+        exclude: [/.*angular.*\.js/, /.*ang.*\.js/] /*exclude scripts loaded by requirejs*/
       },
       test: {
         devDependencies: true,
@@ -207,7 +219,7 @@ module.exports = function (grunt) {
     filerev: {
       dist: {
         src: [
-          '<%= yeoman.dist %>/scripts/{,*/}*.js',
+          '<%= yeoman.dist %>/scripts/**/*.js',
           '<%= yeoman.dist %>/styles/{,*/}*.css',
           '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
           '<%= yeoman.dist %>/styles/fonts/*'
@@ -238,7 +250,7 @@ module.exports = function (grunt) {
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      js: ['<%= yeoman.dist %>/scripts/{,*/}*.js'],
+      js: ['<%= yeoman.dist %>/scripts/**/*.js'],
       options: {
         assetsDirs: [
           '<%= yeoman.dist %>',
@@ -474,8 +486,10 @@ module.exports = function (grunt) {
   grunt.registerTask('webapp', ['nwjs']);
 
   grunt.registerTask('hint', [
-    'newer:jshint'
+    'jshint'
   ]);
+
+  grunt.registerTask('require_test', ['bowerRequirejs']);
 
   //load new builder
   grunt.loadNpmTasks('grunt-nw-builder');
