@@ -1,12 +1,12 @@
 'use strict';
 define(['./Session',
-        './Constants',
+        'json!./constants.json',
         './muntoolJSONLoader'],
         function (Session,
-        		  Constants,
+        		  constants,
         		  muntoolJSONLoader) {
 
   return {'Session': Session,
-          'Constants': Constants,
+          'constants': constants,
           'muntoolJSONLoader': muntoolJSONLoader};
 });

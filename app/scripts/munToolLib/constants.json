@@ -1,0 +1,35 @@
+{
+    "AttendeeStates": {
+        "ACTIVE": 0,
+        "LEFT": 1
+    },
+    "MotionStates": {
+        "DELETED": 4,
+        "DONE": 3,
+        "OPENED": 0,
+        "VOTED_FAILED": 2,
+        "VOTED_PASSED": 1,
+        "VOTED_PASSED_EXTENDED": 5
+    },
+    "MotionTypes": {
+        "MODERATED_CAUCUS": 1,
+        "OTHER": 2,
+        "UNMODERATED_CAUCUS": 0
+    },
+    "SessionModes": {
+        "SPEAKERSLIST": 0,
+        "SPEAKERSLIST_MOD": 1,
+        "UNMOD": 2
+    },
+    "SpeakersListStates": {
+        "CLOSED": 1,
+        "OPEN": 0
+    },
+    "SpeechStates": {
+        "CURRENT_DONE": 3,
+        "CURRENT_RUNNING": 2,
+        "CURRENT_UNSTARTED": 1,
+        "DONE": 4,
+        "UPCOMING": 0
+    }
+}

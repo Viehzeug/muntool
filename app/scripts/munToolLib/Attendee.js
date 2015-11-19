@@ -1,10 +1,10 @@
 'use strict';
 define(['./util',
-        './Constants'],
+        'json!./constants.json'],
         function(util,
-                 Constants){
+                 constants){
 
-var AttendeeStates = Constants.AttendeeStates;
+var AttendeeStates = constants.AttendeeStates;
 
 /**
  * Attendee of the session that was recognized.

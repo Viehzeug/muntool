@@ -11,7 +11,7 @@
   "undef": true,
   "unused": true,
   "globals": {
-    "angular": false
-  },
-  "predef": [ "define" ]
+    "angular": false,
+    "define": true
+  }
 }

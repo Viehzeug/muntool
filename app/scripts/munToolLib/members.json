@@ -1,4 +1,4 @@
-members = ["Afghanistan","Albania","Algeria","Andorra","Angola",  // jshint ignore:line
+["Afghanistan","Albania","Algeria","Andorra","Angola",
 "Antigua and Barbuda","Argentina","Armenia","Australia",
 "Austria","Azerbaijan","The Bahamas","Bahrain","Bangladesh",
 "Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
@@ -33,4 +33,4 @@ members = ["Afghanistan","Albania","Algeria","Andorra","Angola",  // jshint igno
 "Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan",
 "Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom",
 "Tanzania","United States","Uruguay","Uzbekistan","Vanuatu","Venezuela",
-"Vietnam","Yemen","Zambia","Zimbabwe"];
+"Vietnam","Yemen","Zambia","Zimbabwe"]

@@ -1,14 +1,14 @@
 'use strict';
 define(['./util',
         './SpeakersList',
-        './members',
-        './Constants',
+        'json!./members.json',
+        'json!./constants.json',
         './Motion',
         './Attendee'],
         function (util,
                   SpeakersList,
                   members,
-                  Constants,
+                  constants,
                   Motion,
                   Attendee) {
 function Session(){
@@ -223,22 +223,22 @@ Session.prototype.getMotionById = function(id) {
 Session.prototype.getOpenMotions = function() {
   var self = this;
   return this.motions.filter(function(e){  
-    return (e.state === Constants.MotionStates.OPENED);
+    return (e.state === constants.MotionStates.OPENED);
   }).map(function(e){
     var obj = e.toSimpleObject();
     obj.proposedByText = self.getAttendeeById(e.proposedBy).name;
     switch(obj.type)
     {
 
-      case Constants.MotionTypes.UNMODERATED_CAUCUS:
+      case constants.MotionTypes.UNMODERATED_CAUCUS:
         obj.typeText = "Unmoderated Caucus";
         break;
 
-      case Constants.MotionTypes.MODERATED_CAUCUS:
+      case constants.MotionTypes.MODERATED_CAUCUS:
         obj.typeText = "Moderated Caucus";
         break;
 
-      case Constants.MotionTypes.OTHER: // jshint ignore:line
+      case constants.MotionTypes.OTHER: // jshint ignore:line
       //fallthrough
       default:
         obj.typeText = "Motion";
@@ -343,7 +343,7 @@ Session.prototype.getAllSpeakersLists = function(){
 
 Session.prototype.getOpenSpeakersLists = function(){
   return this.getAllSpeakersLists().filter(function(e){
-    return e.state === Constants.SpeakersListStates.OPEN;
+    return e.state === constants.SpeakersListStates.OPEN;
   });
 };
 

@@ -1,13 +1,13 @@
 'use strict';
 define(['./SpeakersList',
         './util',
-        './Constants'],
+        'json!./constants.json'],
         function(SpeakersList,
                  util,
-                 Constants){
+                 constants){
 
-var MotionStates = Constants.MotionStates;
-var MotionTypes = Constants.MotionTypes;
+var MotionStates = constants.MotionStates;
+var MotionTypes = constants.MotionTypes;
 
 function Motion(topic, proposedBy, s, type, listDuration, speechDuration) {
 

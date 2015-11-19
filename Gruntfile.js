@@ -195,7 +195,7 @@ module.exports = function (grunt) {
       app: {
         src: ['<%= yeoman.app %>/index.html'],
         ignorePath:  /\.\.\//,
-        exclude: [/.*angular.*\.js/, /.*ang.*\.js/] /*exclude scripts loaded by requirejs*/
+        exclude: [/.*angular.*\.js/, /.*ang.*\.js/, 'requirejs-json', 'requirejs-text', 'text'] /*exclude scripts loaded by requirejs*/
       },
       test: {
         devDependencies: true,
@@ -489,7 +489,18 @@ module.exports = function (grunt) {
     'jshint'
   ]);
 
-  grunt.registerTask('require_test', ['bowerRequirejs']);
+  grunt.registerTask('clean_require_js', function(){
+    var path = 'app/main.js';
+    if (!grunt.file.exists(path)) {
+            grunt.log.error("file " + path + " not found");
+            return false; //return false to abort the execution
+    }
+    var configText = grunt.file.read(path);
+    configText = configText.replace("'requirejs-json':", "json:");
+    grunt.file.write(path, configText);
+  });
+
+  grunt.registerTask('require_test', ['bowerRequirejs', 'clean_require_js']);
 
   //load new builder
   grunt.loadNpmTasks('grunt-nw-builder');

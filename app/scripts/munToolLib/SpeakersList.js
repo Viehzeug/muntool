@@ -1,9 +1,9 @@
 'use strict';
 define(['./util',
-		    './Constants',
+		    'json!./constants.json',
         './Speech'],
         function(util,
-                 Constants,
+                 constants,
                  Speech){
 
 /**
@@ -64,7 +64,7 @@ function SpeakersList(name, duration, s, listDuration, motion){
   this.speeches = [];
   this.currentSpeechId = -1;
   this.startedForModeratedCaucus = motion;
-  this.state = Constants.SpeakersListStates.OPEN;
+  this.state = constants.SpeakersListStates.OPEN;
   //listDuration === 0 <==> infinity
   if(listDuration !== undefined)
   {
@@ -83,7 +83,7 @@ function SpeakersList(name, duration, s, listDuration, motion){
 }
 
 SpeakersList.prototype.close = function(){
-  this.state = Constants.SpeakersListStates.CLOSED;
+  this.state = constants.SpeakersListStates.CLOSED;
 };
 
 SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){

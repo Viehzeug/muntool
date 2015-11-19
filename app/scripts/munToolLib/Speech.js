@@ -1,10 +1,10 @@
 'use strict';
-define(['./Constants',
+define(['json!./constants.json',
         './util'],
-        function(Constants,
+        function(constants,
                  util){
 
-var SpeechStates = Constants.SpeechStates;
+var SpeechStates = constants.SpeechStates;
 
 function Speech(speaker, duration, s, sl) {
   /*** OOP Constructs ***/
