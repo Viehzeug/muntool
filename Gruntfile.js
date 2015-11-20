@@ -9,25 +9,29 @@
 
 module.exports = function (grunt) {
 
-  // Time how long tasks take. Can help when optimizing build times
-  require('time-grunt')(grunt);
+  /*
+   Load Stuff
+   */
+  require('time-grunt')(grunt); //times grunt build steps
+  grunt.loadNpmTasks('grunt-bower-requirejs'); //wires up bower-files in requirejs main
 
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
-    useminPrepare: 'grunt-usemin',
-    ngtemplates: 'grunt-angular-templates',
-    cdnify: 'grunt-google-cdn'
+    useminPrepare: 'grunt-usemin', //use minimized scripts when possible
+    ngtemplates: 'grunt-angular-templates' //use angular template caches
   });
 
-  grunt.loadNpmTasks('grunt-bower-requirejs');
+  // Load NW builder
+  grunt.loadNpmTasks('grunt-nw-builder');
 
-  // Configurable paths for the application
+  /*
+   Config Setup
+   */
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
     dist: 'dist'
   };
 
-  // Define the configuration for all the tasks
   grunt.initConfig({
 
     // Project settings
@@ -49,7 +53,7 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/scripts/**/*.js'],
         tasks: ['newer:jshint:all'],
         options: {
           livereload: '<%= connect.options.livereload %>'
@@ -263,32 +267,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // The following *-min tasks will produce minified files in the dist folder
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
     imagemin: {
       dist: {
         files: [{
@@ -351,13 +329,6 @@ module.exports = function (grunt) {
           src: '*.js',
           dest: '.tmp/concat/scripts'
         }]
-      }
-    },
-
-    // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
       }
     },
 
@@ -429,14 +400,53 @@ module.exports = function (grunt) {
     }
   });
 
+  /*
+   Custom Taks
+   */
 
+  //clean up after wiredep for require-paths
+  //replaces the "requirejs-json"-key with "json"-key
+  grunt.registerTask('wiredep_require_cleanup', function(){
+    var path = 'app/main.js';
+    if (!grunt.file.exists(path)) {
+            grunt.log.error("file " + path + " not found");
+            return false; //return false to abort the execution
+    }
+    var configText = grunt.file.read(path);
+    var match = /requirejs\.config\(([.\s\S]*?\})\);/.exec(configText);
+    if(!(/(['"]?)json\1\s*?:/.test(match[1])))
+    {
+      grunt.log.writeln('did not find "json"-key');
+      if (/(['"]?)requirejs-json\1\s*?:/.test(match[1]))
+      {
+        grunt.log.writeln('but found "requirejs-json"-key - going to replace');
+        var configSettings = match[1].replace(/(['"]?)requirejs-json\1\s*?:/, 'json:');
+        configText = configText.replace(match[1], configSettings);
+        grunt.file.write(path, configText);
+        grunt.log.ok('replaced "requirejs-json"-key with "json"-key');
+      } else
+      {
+        grunt.log.writeln('but also did not find "requirejs-json"-key; no changes were made');
+      }
+    } else
+    {
+      grunt.log.writeln('file already contains "json"-key; no changes were made');
+    }
+  });
+
+  //wiredep require-paths
+  grunt.registerTask('wiredep_require', ['bowerRequirejs', 'wiredep_require_cleanup']);
+
+  //serve
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
 
     grunt.task.run([
+      'jshint',
       'clean:server',
+      'wiredep_require',
       'wiredep',
       'concurrent:server',
       'autoprefixer:server',
@@ -445,23 +455,24 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve:' + target]);
-  });
-
+  //test
   grunt.registerTask('test', [
+    'jshint',
     'clean:server',
     'wiredep',
+    'wiredep_require',
     'concurrent:test',
     'autoprefixer',
     'connect:test',
     'karma'
   ]);
 
+  //build
   grunt.registerTask('build', [
+    'jshint',
     'clean:dist',
     'wiredep',
+    'wiredep_require',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
@@ -469,39 +480,18 @@ module.exports = function (grunt) {
     'concat',
     'ngAnnotate',
     'copy:dist',
-    'cdnify',
     'cssmin',
-    'uglify',
     'filerev',
     'usemin',
+    'uglify',
     'htmlmin'
   ]);
 
-  grunt.registerTask('default', [
-    'newer:jshint',
-    'test',
-    'build'
-  ]);
+  //generate webapp
+  grunt.registerTask('webapp', ['build',
+                                'nwjs']);
 
-  grunt.registerTask('webapp', ['nwjs']);
-
-  grunt.registerTask('hint', [
-    'jshint'
-  ]);
-
-  grunt.registerTask('clean_require_js', function(){
-    var path = 'app/main.js';
-    if (!grunt.file.exists(path)) {
-            grunt.log.error("file " + path + " not found");
-            return false; //return false to abort the execution
-    }
-    var configText = grunt.file.read(path);
-    configText = configText.replace("'requirejs-json':", "json:");
-    grunt.file.write(path, configText);
-  });
-
-  grunt.registerTask('require_test', ['bowerRequirejs', 'clean_require_js']);
-
-  //load new builder
-  grunt.loadNpmTasks('grunt-nw-builder');
+  //default task is serve
+  grunt.registerTask('default', ['serve']);
+  
 };
