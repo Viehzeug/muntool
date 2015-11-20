@@ -67,8 +67,8 @@ requirejs.config({
     'angular-sanitize': '../bower_components/angular-sanitize/angular-sanitize',
     'angular-touch': '../bower_components/angular-touch/angular-touch',
     requirejs: '../bower_components/requirejs/require',
-    json: '../bower_components/requirejs-json/json',
-    text: '../bower_components/text/text'
+    text: '../bower_components/text/text',
+    json: '../bower_components/requirejs-json/json'
   },
   baseUrl: '/scripts',
   packages: [

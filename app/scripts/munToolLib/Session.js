@@ -31,6 +31,7 @@ function Session(){
     this.newSpeakersList('General Speakers List', 45, 0);
   this.currentSpeakersListId = this.generalSpeakersListId;
   this.speakerslistsHashCode = '';
+  this.constants = constants;
   this.updateSpeakerslistsHashCode();
 
 }
