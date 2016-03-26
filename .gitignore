@@ -6,3 +6,4 @@
 /webkitbuilds
 node_modules
 /cache
+/build

@@ -68,9 +68,10 @@ requirejs.config({
     'angular-touch': '../bower_components/angular-touch/angular-touch',
     requirejs: '../bower_components/requirejs/require',
     text: '../bower_components/text/text',
-    json: '../bower_components/requirejs-json/json'
+    json: '../bower_components/requirejs-json/json',
+    'requirejs-json': '../bower_components/requirejs-json/json'
   },
-  baseUrl: '/scripts',
+  baseUrl: 'scripts',
   packages: [
 
   ]

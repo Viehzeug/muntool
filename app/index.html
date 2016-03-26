@@ -405,6 +405,17 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/requirejs/require.js"></script>
     <!-- endbower -->
+    
+    <!-- Necessary hack to ensure it works in nw.js, where there is both requirejs and node_require -->
+    <script>
+      var node_require = window.require;
+      window.require = function(data) {
+          return (typeof data === 'string' ? node_require : window.requirejs).apply(window, arguments);
+      }
+    </script>
+    
     <script src="main.js"></script>
+
+
 </body>
 </html>

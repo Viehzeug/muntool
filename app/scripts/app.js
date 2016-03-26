@@ -75,7 +75,7 @@ define(function (require) {
     {
       var sessionJSON = localStorageService.get('session');
       //TODO load from library
-      if (sessionJSON !== undefined) {
+      if (sessionJSON !== undefined && sessionJSON !== null && sessionJSON !== '') {
         session = munToolLib.muntoolJSONLoader.load(sessionJSON);
       } else {
         session = new munToolLib.Session();

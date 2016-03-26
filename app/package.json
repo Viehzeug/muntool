@@ -1,5 +1,13 @@
 {
   "name": "muntool",
   "version": "1.0.0",
-  "main": "index.html"
+  "main": "index.html",
+  "window": {
+  	"toolbar": false,
+    "min_width": 1000,
+    "min_height": 700,
+    "width": 800,
+    "height": 600
+  }
 }
+
