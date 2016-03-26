@@ -416,6 +416,21 @@
     
     <script src="main.js"></script>
 
+    <script type="text/javascript">
+      //only create mac UI if we are in nw.js and are running on Mac OS
+      var gui = require('nw.gui');
+      if (gui !== undefined && process.platform == 'darwin')
+      {
+        var menu = new gui.Menu({ type: 'menubar' });
+        var menuItems = new gui.Menu();
+        menu.createMacBuiltin('muntool',{
+            hideEdit: false,
+            hideWindow: false
+        });
+        gui.Window.get().menu = menu;
+      }
+    </script>
+
 
 </body>
 </html>

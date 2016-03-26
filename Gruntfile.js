@@ -107,22 +107,6 @@ module.exports = function(grunt) {
           }
         }
       },
-      test: {
-        options: {
-          port: 9001,
-          middleware: function(connect) {
-            return [
-              connect.static('.tmp'),
-              connect.static('test'),
-              connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
-              ),
-              connect.static(appConfig.app)
-            ];
-          }
-        }
-      },
       dist: {
         options: {
           open: true,
@@ -166,7 +150,8 @@ module.exports = function(grunt) {
         }]
       },
       server: '.tmp',
-      webapp: 'webapp/'
+      webapp: 'webapp/',
+      macIcon: {options:{force: true}, files:[{src:'build/muntool/osx64/muntool.app/Contents/Resources/nw.icns'}]}
     },
     // Add vendor prefixed styles
     autoprefixer: {
@@ -255,6 +240,13 @@ module.exports = function(grunt) {
         cwd: '<%= appConfig.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
+      },
+      macIcon: {
+        cwd: '<%= appConfig.app %>/images/',
+        src: 'nw.icns',
+        dest: 'build/muntool/osx64/muntool.app/Contents/Resources/',
+        expand: true,
+        forceOverwrite: true
       }
     }
 
@@ -365,7 +357,7 @@ module.exports = function(grunt) {
   ]);
 
   //generate webapp
-  grunt.registerTask('webapp', ['clean:webapp', 'build', 'build-nwjs']);
+  grunt.registerTask('webapp', ['clean:webapp', 'build', 'build-nwjs', 'clean:macIcon', 'copy:macIcon']);
 
   //default task is serve
   grunt.registerTask('default', ['serve']);

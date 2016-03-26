@@ -6,8 +6,9 @@
   	"toolbar": false,
     "min_width": 1000,
     "min_height": 700,
-    "width": 800,
-    "height": 600
+    "width": 1000,
+    "height": 700,
+    "icon": "images/logo.png"
   }
 }
 
