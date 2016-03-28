@@ -1,6 +1,9 @@
 var http = require('http');
 var cheerio = require('cheerio');
 
+
+var out = [];
+
 var options = {
   host: 'www.un.org',
   path: '/en/members/'
@@ -16,7 +19,6 @@ callback = function(response) {
 
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
-    // console.log(str);
     $ = cheerio.load(str);
     var foo = $('ul > li > ul').find('li.countryname').each(function(i, obj){
       var name = $(obj).text();
@@ -25,8 +27,9 @@ callback = function(response) {
       name = name.trim()
              .replace(/(?:\r\n|\r|\n)/g, ' ')
              .replace('*', '').trim();
-      console.log(name);
+      out.push(name);
     });
+    console.log(JSON.stringify(out));
   });
 }
 
