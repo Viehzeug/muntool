@@ -520,9 +520,10 @@ define(function (require) {
       var filtered = $scope.openMotions.filter(function(e){
         return (e.id === id);
       });
+
       if (filtered.length > 0)
       {
-        $scope.currentMotion = $scope.openMotions[0];
+        $scope.currentMotion = filtered[0];
       }
       else
       {

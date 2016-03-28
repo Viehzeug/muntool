@@ -9,16 +9,20 @@ version 0.12.1.
 
 ##Current Version
 
-**Current Version:** 0.2 - Version for second test session; for changes see commits
+**Current Version:** 1.0 - first public release
 
 ###Version History
 0.1 - Inital Version tested at MUN session
+0.2 - Version for second test session; for changes see commits
+
 
 ## Build & development
 
-Run `grunt` for building and `grunt serve` for preview.
+Run `grunt build` for building html, `grunt webapp` for the packaged webapp and `grunt serve` for preview/developement.
 
 ## Binary Builds
+
+
 
 
 #TODO
@@ -26,13 +30,10 @@ Run `grunt` for building and `grunt serve` for preview.
 - **display Voteing Results**
 - **Timer-Tool**
 - **Check Inputs (Time on Extensions)**
-- restructure code
 - Server/Client-Setup
 	- Frontend/Backend View
 - **unmod nicht als modal**
-- parse UN-country-List: http://www.un.org/en/members/
-	- Flags
-	- Names
+- also get country flags from the un country list
 - **reset sometimes not working**
 	- rework save system
 - Automate closeing of Speakerslist
@@ -51,4 +52,3 @@ Run `grunt` for building and `grunt serve` for preview.
 - todo favicon
 - todo config file
 	- logo
-- https://www.cia.gov/library/publications/download/

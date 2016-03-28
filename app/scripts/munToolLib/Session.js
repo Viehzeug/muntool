@@ -245,6 +245,17 @@ Session.prototype.getOpenMotions = function() {
         obj.typeText = "Motion";
     }
     return obj;
+  }).sort(function(x,y){
+
+    //lower type first (i.e. unmod before mod)
+    if (x.type !== y.type)
+    {
+      return x.type > y.type;
+    }
+
+    //longer first
+    return x.listDuration < y.listDuration;
+
   });
 };
 
