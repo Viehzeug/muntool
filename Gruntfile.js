@@ -135,6 +135,40 @@ module.exports = function(grunt) {
       }
     },
 
+
+    compress: {
+      mac: {
+        options: {
+          archive: 'build/muntool/muntool_mac.zip'
+        },
+        files: [{expand: true, cwd: 'build/muntool/osx64/', src: ['**'], dest: '.'}]
+      },
+      windows32: {
+        options: {
+          archive: 'build/muntool/muntool_win32.zip'
+        },
+        files: [{expand: true, cwd: 'build/muntool/win32/', src: ['**'], dest: 'muntool_win32/'}]
+      },
+      windows64: {
+        options: {
+          archive: 'build/muntool/muntool_win64.zip'
+        },
+        files: [{expand: true, cwd: 'build/muntool/win64/', src: ['**'], dest: 'muntool_win64/'}]
+      },
+      linux32: {
+        options: {
+          archive: 'build/muntool/muntool_linux32.zip'
+        },
+        files: [{expand: true, cwd: 'build/muntool/linux32/', src: ['**'], dest: 'muntool_linux32/'}]
+      },
+      linux64: {
+        options: {
+          archive: 'build/muntool/muntool_linux64.zip'
+        },
+        files: [{expand: true, cwd: 'build/muntool/linux64/', src: ['**'], dest: 'muntool_linux64/'}]
+      }
+    },
+
     // Empties folders to start fresh
     clean: {
       dist: {
@@ -357,7 +391,7 @@ module.exports = function(grunt) {
   ]);
 
   //generate webapp
-  grunt.registerTask('webapp', ['clean:webapp', 'build', 'build-nwjs', 'clean:macIcon', 'copy:macIcon']);
+  grunt.registerTask('webapp', ['clean:webapp', 'build', 'build-nwjs', 'clean:macIcon', 'copy:macIcon', 'compress']);
 
   //default task is serve
   grunt.registerTask('default', ['serve']);
