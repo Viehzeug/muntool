@@ -1,6 +1,7 @@
 {
   "name": "muntool",
   "private": true,
+  "version": "1.0.0",
   "devDependencies": {
     "bower": "^1.6.5",
     "grunt": "^0.4.5",
