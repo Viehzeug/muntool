@@ -183,7 +183,7 @@ module.exports = function(grunt) {
           ]
         }]
       },
-      server: '.tmp',
+      server: {options: {force: true}, files: [{dot: true, src:['.tmp']}]  },
       webapp: 'webapp/',
       macIcon: {options:{force: true}, files:[{src:'build/muntool/osx64/muntool.app/Contents/Resources/nw.icns'}]}
     },
@@ -391,7 +391,7 @@ module.exports = function(grunt) {
   ]);
 
   //generate webapp
-  grunt.registerTask('webapp', ['clean:webapp', 'build', 'build-nwjs', 'clean:macIcon', 'copy:macIcon', 'compress']);
+  grunt.registerTask('webapp', ['clean:webapp', 'build', 'build-nwjs', 'clean:macIcon', 'copy:macIcon', 'compressgit']);
 
   //default task is serve
   grunt.registerTask('default', ['serve']);

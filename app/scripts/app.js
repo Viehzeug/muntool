@@ -62,7 +62,6 @@ define(function (require) {
     ]);
 
   app.init = function () {
-      console.log('foo');
       angular.bootstrap(document, ['muntoolApp']);
   };
 
@@ -129,7 +128,6 @@ define(function (require) {
 
   function showExtendSpeaerslistModal($modal)
   {
-      //var newSpeakersListModal =
       $modal.open({
         animation: true,
         templateUrl: 'extendSpeaerslistModal.html',
@@ -146,8 +144,8 @@ define(function (require) {
       });
 
       newSpeakersListModal.result.then(function(newList){
-        munSession.newSpeakersList(newList.name, newList.duration, 0); //TODO enable different durations
-        munSession.setCurrentSpeakersList(newList.name);
+        var id = munSession.newSpeakersList(newList.name, newList.duration, 0); //TODO enable different durations
+        munSession.setCurrentSpeakersList(id);
       });
   }
 
@@ -257,6 +255,21 @@ define(function (require) {
       showExtendSpeaerslistModal($modal, munSession);
     };
 
+    $scope.changeDuration = function(){
+        
+      var changeDurationModal = $modal.open({
+        animation: true,
+        templateUrl: 'speakersListChangeDurationModal.html',
+        controller: 'speakersListChangeDurationModalController',
+        resolve: {'name': function(){return $scope.currentSpeakersList.name;},
+                  'duration': function(){return $scope.currentSpeakersList.duration;}}
+      });
+
+      changeDurationModal.result.then(function(duration){
+        $scope.currentSpeakersList.setDuration(duration);
+      });
+    };
+
     $scope.getSpeakerClass = function(s)
     {
       switch(s.state)
@@ -286,6 +299,7 @@ define(function (require) {
     $scope.newSpeakersList = function()
     {
       showNewSpeakersListDialog($modal, munSession);
+      update();
     };
 
     $scope.newSpeaker = function(selected)
@@ -609,5 +623,22 @@ define(function (require) {
       // Start the timer
       $timeout(tick, $scope.tickInterval);
   });
+
+
+  app.controller('speakersListChangeDurationModalController', function($scope, $modalInstance, name, duration){
+    $scope.name = name;
+    $scope.duration = duration;
+
+    $scope.ok = function(){
+      $modalInstance.close($scope.duration);
+    };
+
+    $scope.cancel = function () {
+      $modalInstance.dismiss();
+    };
+
+
+  });
+
   return app;
 });

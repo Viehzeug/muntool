@@ -98,6 +98,11 @@ SpeakersList.prototype.extend = function(overwhelmingMajority, inFavor, time){
   }
 };
 
+SpeakersList.prototype.isDurationChangeable = function(){
+  return ! this.isMotion();
+};
+
+
 SpeakersList.prototype.isCloseable = function(){
   return this.session.generalSpeakersListId !== this.id;
 };
@@ -133,7 +138,7 @@ SpeakersList.prototype.speechesRemaining = function(){
     return 0;
   } else
   {
-    var timeRemaining = this.listDuration - (this.speeches.length * this.duration);
+    var timeRemaining = this.listDuration - (this.speeches.map(function(e){return e.duration;}).reduce(function(prev, cur){ return prev + cur;}));
     return Math.floor(timeRemaining/this.duration);
   }
 };
@@ -237,5 +242,13 @@ SpeakersList.prototype.advanceToNextSpeech = function(){
   }
 };
 
+SpeakersList.prototype.setDuration = function(duration){
+  console.log('Changing speech duration of Speakerslist ' + this.name + ' to ' + duration);
+  this.duration = duration;
+  this.session.updateSpeakerslistsHashCode();
+};
+
 	return SpeakersList;
 });
+
+

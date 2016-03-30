@@ -106,16 +106,21 @@
         <div class="col-md-5" ng-controller="speakersListController"> 
           <h2>Speakers List</h2>
 
-          <p>
-            <div class="dropdown">
-              <button style="max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" id="speakers-lists-dropdown" class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">{{currentSpeakersList.name}}<span class="caret"></span></button>
-              <ul id="speakers-lists-dropdown-menu" class="dropdown-menu" role="menu" aria-labelledby="speakers-lists-dropdown">
-                <li ng-repeat="s in speakersLists" role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="changeSpeakersList(event, s)" data-speakerslist-id="{{s.name}}">{{s.name}}</a></li>
-                <li role="presentation" class="divider"></li>
-                <li role="presentation"><a role="menuitem" id="speakers-lists-dropdown-menu-new-list" tabindex="-1" href="#" ng-click="newSpeakersList()">Add new Speakers List</a></li>
-              </ul>
+          <div class="clearafter">
+            <div style="float: left; width:50%;">
+              <div class="dropdown">
+                <button style="max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" id="speakers-lists-dropdown" class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">{{currentSpeakersList.name}}<span class="caret"></span></button>
+                <ul id="speakers-lists-dropdown-menu" class="dropdown-menu" role="menu" aria-labelledby="speakers-lists-dropdown">
+                  <li ng-repeat="s in speakersLists" role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="changeSpeakersList(event, s)" data-speakerslist-id="{{s.name}}">{{s.name}}</a></li>
+                  <li role="presentation" class="divider"></li>
+                  <li role="presentation"><a role="menuitem" id="speakers-lists-dropdown-menu-new-list" tabindex="-1" href="#" ng-click="newSpeakersList()">Add new Speakers List</a></li>
+                </ul>
+              </div>
             </div>
-          </p>
+            <div style="float: left; width:50%;">
+              <button  ng-show="currentSpeakersList.isDurationChangeable()" class="btn btn-default" type="button" ng-click="changeDuration()">Change Speech Duration</button>
+            </div>
+          </div>
           <ul class="speakerslist-details">
             <li>Speech Duration: {{currentSpeakersList.duration}} s</li>
             <li>Speeches Done: {{currentSpeakersList.speechesDone()}}</li>
@@ -175,7 +180,23 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-primary" type="button" ng-click="ok()">OK</button> <!-- todo -->
+              <button class="btn btn-primary" type="button" ng-click="add()">OK</button> <!-- todo -->
+              <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+          </script>
+
+          <script type="text/ng-template" id="speakersListChangeDurationModal.html">
+            <div class="modal-header">
+              <h3 class="modal-title">Speakerslist: {{name}} - change speech duration</h3>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="new-speakers-list-duration">Speech duration [s]:</label>
+                <input id="new-speakers-list-duration" type="number" class="form-control" ng-model="duration">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
               <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
           </script>
