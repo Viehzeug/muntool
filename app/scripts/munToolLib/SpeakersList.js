@@ -138,7 +138,7 @@ SpeakersList.prototype.speechesRemaining = function(){
     return 0;
   } else
   {
-    var timeRemaining = this.listDuration - (this.speeches.map(function(e){return e.duration;}).reduce(function(prev, cur){ return prev + cur;}));
+    var timeRemaining = this.listDuration - (this.speeches.map(function(e){return e.duration;}).reduce(function(prev, cur){ return prev + cur;}, 0));
     return Math.floor(timeRemaining/this.duration);
   }
 };
