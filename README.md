@@ -26,6 +26,7 @@ Run `grunt build` for building html, `grunt webapp` for the packaged webapp and 
 
 
 #TODO
+- sort attendence list by #speeches with chooser etc.
 - windows icon https://github.com/nwjs/nw.js/wiki/Icons
 - **display Voteing Results**
 - **Timer-Tool**
