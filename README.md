@@ -7,11 +7,10 @@ The application is stuctured according to the MVC principle. Where angularjs is 
 This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
 version 0.12.1.
 
-##Current Version
+## Current Version
+1.0 - first public release
 
-**Current Version:** 1.0 - first public release
-
-###Version History
+### Version History
 0.1 - Inital Version tested at MUN session
 0.2 - Version for second test session; for changes see commits
 
