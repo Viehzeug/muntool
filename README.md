@@ -21,35 +21,4 @@ version 0.12.1.
 Run `grunt build` for building html, `grunt webapp` for the packaged webapp and `grunt serve` for preview/developement.
 
 ## Binary Builds
-
-
-
-
-#TODO
-- sort attendence list by #speeches with chooser etc.
-- windows icon https://github.com/nwjs/nw.js/wiki/Icons
-- **display Voteing Results**
-- **Timer-Tool**
-- **Check Inputs (Time on Extensions)**
-- Server/Client-Setup
-	- Frontend/Backend View
-- **unmod nicht als modal**
-- also get country flags from the un country list
-- **reset sometimes not working**
-	- rework save system
-- Automate closeing of Speakerslist
-- **unmod timer: show topic**
-- tool starts with NaN:NaN when loading and no current speech
-- Autoscroll
-- Tests
-- Vote-Button should also add
-- pause button for timer
-- Add Extension to motion panel
-- make closed caucuses accessable (for extensions)
-- show which is the currently selected motion in voting panel
-- **redesign voting panel**
-- **order in order disruptiveness**
-- **votes sometimes do not work**
-- todo favicon
-- todo config file
-	- logo
+Binaries for different Operating Systems, and different branding can be found as relseases.
