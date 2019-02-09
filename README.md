@@ -11,8 +11,8 @@ version 0.12.1.
 1.0 - first public release
 
 ### Version History
-0.1 - Inital Version tested at MUN session
-0.2 - Version for second test session; for changes see commits
+- 0.1 - Inital Version tested at MUN session
+- 0.2 - Version for second test session; for changes see commits
 
 
 ## Build & development
